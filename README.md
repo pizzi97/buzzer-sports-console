@@ -1,59 +1,45 @@
-# BuzzerSportsConsole
+# Buzzer Sports Console
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.2.4.
+Admin management console for sports, competitions, and participant tracking, built with modern Angular.
 
-## Development server
+## Tech Stack
+* **Framework**: Angular 19+ (Standalone Components, Signals)
+* **Styling**: SCSS, Design System based on Figma specifications
+* **Language**: TypeScript
 
-To start a local development server, run:
+## Project Structure
+* `src/app/layout/`: Global layout components (Sidebar, Header)
+* `src/app/pages/`: Feature views (Sports Management Dashboard)
+* `src/environments/`: Environment configurations for development and production
 
+## Getting Started
+
+1. **Clone the repository**
 ```bash
-ng serve
+git clone [https://github.com/TUO_USERNAME/buzzer-sports-console.git](https://github.com/TUO_USERNAME/buzzer-sports-console.git)
+cd buzzer-sports-console
+
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
+2. **Install dependencies**
 ```bash
-ng generate component component-name
+npm install
+
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
+3. **Run development server**
 ```bash
-ng generate --help
+npm start
+
 ```
 
-## Building
+Navigate to `http://localhost:4200/`.
 
-To build the project run:
+## 🚢 Build & Production
 
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+To build the project for production:
 
 ```bash
-ng test
+npm run build
+
 ```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
