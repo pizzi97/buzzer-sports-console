@@ -44,3 +44,5 @@ export class SportsComponent {
     return this.allSports.filter((s) => s.name.toLowerCase().includes(query));
   });
 }
+
+export { SportsComponent as Sports };

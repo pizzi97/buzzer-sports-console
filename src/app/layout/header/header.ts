@@ -15,3 +15,5 @@ export class HeaderComponent {
     this.searchService.searchTerm.set(value);
   }
 }
+
+export { HeaderComponent as Header };
