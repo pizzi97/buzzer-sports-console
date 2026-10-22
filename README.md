@@ -16,7 +16,7 @@ Admin management console for sports, competitions, and participant tracking, bui
 
 1. **Clone the repository**
 ```bash
-git clone [https://github.com/TUO_USERNAME/buzzer-sports-console.git](https://github.com/TUO_USERNAME/buzzer-sports-console.git)
+git clone [https://github.com/pizzi97/buzzer-sports-console.git](https://github.com/TUO_USERNAME/buzzer-sports-console.git)
 cd buzzer-sports-console
 
 ```
