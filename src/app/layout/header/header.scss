@@ -1,44 +1,50 @@
 .header {
-  height: var(--header-height);
-  padding: 8px 24px;
-  background: var(--bg-dark);
-  border-bottom: 1px solid var(--border-subtle);
+  box-sizing: border-box;
   display: flex;
+  flex-direction: row;
   align-items: center;
   justify-content: space-between;
+  padding: 0 24px;
+  height: 65px;
+  background: #131515;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 
   .page-title {
     font-family: 'Poppins', sans-serif;
     font-size: 18px;
     font-weight: 700;
-    color: var(--color-white);
+    color: #FFFFFF;
+    margin: 0;
   }
 
-  .search-bar {
-    width: 361px;
-    height: 48px;
-    background: var(--surface-tint);
-    border-radius: 12px;
-    padding: 0 14px;
+  .search-box {
     display: flex;
     align-items: center;
     gap: 8px;
+    padding: 0 12px;
+    width: 240px;
+    height: 36px;
+    background: rgba(255, 255, 255, 0.05); // Sfondo scuro trasparente
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
 
-    .search-icon {
-      font-size: 14px;
-      opacity: 0.3;
+    .search-ico {
+      opacity: 0.5;
+      stroke: #FFFFFF;
+      flex-shrink: 0;
     }
 
     input {
       background: transparent;
       border: none;
       outline: none;
-      color: var(--color-white);
-      font-size: 14px;
       width: 100%;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      color: #FFFFFF;
 
       &::placeholder {
-        color: var(--color-muted);
+        color: rgba(255, 255, 255, 0.4);
       }
     }
   }

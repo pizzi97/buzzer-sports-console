@@ -1,18 +1,10 @@
 <div class="content-body">
-  <!-- Barra Azioni Superiore (Frame 7 / Frame 5419) -->
   <div class="action-row">
-    <button class="btn-pill" type="button">Sport</button>
-
-    <button class="btn-add" type="button">
-      <svg class="btn-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-        <line x1="12" y1="5" x2="12" y2="19"></line>
-        <line x1="5" y1="12" x2="19" y2="12"></line>
-      </svg>
-      <span>Add Sport</span>
-    </button>
+    <div class="left-actions">
+      <button class="btn-pill" type="button">Sport</button>
+    </div>
   </div>
 
-  <!-- 4 Stat Cards (Frame 5414) -->
   <div class="stats-grid">
     <div class="stat-card">
       <span class="stat-val">52</span>
@@ -32,83 +24,30 @@
     </div>
   </div>
 
-  <!-- Tabella Dati (Frame 5114) -->
   <div class="table-container">
     <table class="data-table">
       <thead>
       <tr>
-        <th>
-          <div class="th-content">
-            <span>Sport</span>
-            <svg class="sort-icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <path d="m6 9 6 6 6-6"/>
-            </svg>
-          </div>
-        </th>
-        <th>
-          <div class="th-content">
-            <span>Main Entities</span>
-            <svg class="sort-icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <path d="m6 9 6 6 6-6"/>
-            </svg>
-          </div>
-        </th>
-        <th>
-          <div class="th-content">
-            <span>Competitions</span>
-            <svg class="sort-icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <path d="m6 9 6 6 6-6"/>
-            </svg>
-          </div>
-        </th>
-        <th>
-          <div class="th-content">
-            <span>Participants</span>
-            <svg class="sort-icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <path d="m6 9 6 6 6-6"/>
-            </svg>
-          </div>
-        </th>
+        <th>Sport</th>
+        <th>Main Entities</th>
+        <th>Competitions</th>
+        <th>Participants</th>
         <th class="text-right">Actions</th>
       </tr>
       </thead>
       <tbody>
         @for (item of sportsList(); track item.name) {
           <tr>
-            <!-- Colonna Sport con Drag Icon, Emoji e Nome -->
             <td class="name-col">
-              <span class="drag-handle" title="Reorder">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                  <circle cx="8" cy="5" r="1.5" />
-                  <circle cx="16" cy="5" r="1.5" />
-                  <circle cx="8" cy="12" r="1.5" />
-                  <circle cx="16" cy="12" r="1.5" />
-                  <circle cx="8" cy="19" r="1.5" />
-                  <circle cx="16" cy="19" r="1.5" />
-                </svg>
-              </span>
               <span class="emoji">{{ item.icon }}</span>
               <span class="sport-name">{{ item.name }}</span>
             </td>
-
             <td>{{ item.mainEntities }}</td>
             <td>{{ item.competitions }}</td>
             <td>{{ item.participants }}</td>
-
-            <!-- Colonna Azioni con Icone SVG Figma (ic_edit & ic_delete) -->
             <td class="text-right actions-cell">
-              <button class="icon-btn" type="button" title="Edit">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                </svg>
-              </button>
-              <button class="icon-btn delete-btn" type="button" title="Delete">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <polyline points="3 6 5 6 21 6" />
-                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                </svg>
-              </button>
+              <button class="icon-btn" type="button" title="Edit">✏️</button>
+              <button class="icon-btn delete-btn" type="button" title="Delete">🗑️</button>
             </td>
           </tr>
         }

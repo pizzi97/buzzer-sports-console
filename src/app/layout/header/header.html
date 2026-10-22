@@ -1,7 +1,14 @@
 <header class="header">
   <h1 class="page-title">Sport Management</h1>
-  <div class="search-bar">
-    <span class="search-icon">🔍</span>
-    <input type="text" placeholder="Search" />
+
+  <div class="search-box">
+    <svg class="search-ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+    </svg>
+    <input
+      type="text"
+      [value]="searchService.searchTerm()"
+      (input)="onSearch($event)"
+      placeholder="Search..." />
   </div>
 </header>

@@ -1,5 +1,6 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { SearchService } from '../../services/search.service';
 
 interface SportEntry {
   name: string;
@@ -17,7 +18,10 @@ interface SportEntry {
   styleUrl: './sports.scss',
 })
 export class SportsComponent {
-  sportsList = signal<SportEntry[]>([
+  // Iniettiamo il servizio di ricerca
+  private searchService = inject(SearchService);
+
+  private allSports: SportEntry[] = [
     { name: 'Football', icon: '⚽', mainEntities: 5, competitions: 12, participants: 86 },
     { name: 'Basketball', icon: '🏀', mainEntities: 5, competitions: 10, participants: 75 },
     { name: 'Baseball', icon: '⚾', mainEntities: 3, competitions: 14, participants: 92 },
@@ -31,6 +35,12 @@ export class SportsComponent {
     { name: 'Golf', icon: '⛳', mainEntities: 5, competitions: 8, participants: 65 },
     { name: 'Swimming', icon: '🏊', mainEntities: 3, competitions: 12, participants: 80 },
     { name: 'Gymnastics', icon: '🤸', mainEntities: 2, competitions: 15, participants: 60 },
-  ]);
+  ];
+
+  // La lista filtrata ora legge in tempo reale il segnale globale del servizio
+  sportsList = computed(() => {
+    const query = this.searchService.searchTerm().toLowerCase().trim();
+    if (!query) return this.allSports;
+    return this.allSports.filter((s) => s.name.toLowerCase().includes(query));
+  });
 }
-export { SportsComponent as Sports };
