@@ -1,0 +1,45 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@300;400;700&display=swap');
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  /* Colors da Figma */
+  --color-dark: #131515;
+  --color-dark-lighter: #212121;
+  --color-yellow: #FFB414;
+  --color-red: #EC193C;
+  --color-gray: #3E3E3E;
+  --color-green: #2ED368;
+  --color-orange: #FF5B14;
+  --color-white: #FFFFFF;
+  --color-black: #000000;
+
+  /* Opacities & Borders */
+  --border-subtle: rgba(255, 255, 255, 0.1);
+  --border-input: rgba(255, 255, 255, 0.24);
+  --surface-tint: rgba(255, 255, 255, 0.03);
+  --surface-active: rgba(255, 255, 255, 0.1);
+  --text-muted: rgba(255, 255, 255, 0.54);
+
+  /* Layout */
+  --sidebar-width: 311px;
+  --header-height: 65px;
+}
+
+body {
+  background-color: var(--color-dark);
+  color: var(--color-white);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}

@@ -1,0 +1,189 @@
+.content-body {
+  box-sizing: border-box;
+  padding: 16px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: #131515;
+  width: 100%;
+}
+
+.action-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 26px;
+
+  .btn-pill {
+    padding: 6px 12px;
+    height: 26px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    border: none;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 10px;
+    color: #FFFFFF;
+    cursor: pointer;
+  }
+
+  .btn-add {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    height: 26px;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 10px;
+    color: #FFFFFF;
+    cursor: pointer;
+
+    svg {
+      width: 12px;
+      height: 12px;
+      display: block;
+    }
+  }
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  height: 88px;
+
+  .stat-card {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 16px 24px;
+    gap: 6px;
+    height: 88px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+
+    .stat-val {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 300;
+      font-size: 24px;
+      line-height: 1;
+      color: #FFFFFF;
+    }
+
+    .stat-lbl {
+      font-family: 'Inter', sans-serif;
+      font-weight: 400;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.54);
+    }
+  }
+}
+
+.table-container {
+  box-sizing: border-box;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+
+    thead tr {
+      height: 28px;
+      background: rgba(255, 255, 255, 0.1);
+
+      th {
+        padding: 4px 12px;
+        text-align: left;
+        font-family: 'Inter', sans-serif;
+        font-weight: 400;
+        font-size: 10px;
+        color: rgba(255, 255, 255, 0.54);
+
+        .th-content {
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+
+          svg {
+            width: 10px;
+            height: 10px;
+            display: block;
+          }
+        }
+      }
+    }
+
+    tbody tr {
+      box-sizing: border-box;
+      height: 40px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.03);
+      }
+
+      td {
+        padding: 0 12px;
+        font-family: 'Inter', sans-serif;
+        font-size: 12px;
+        color: #FFFFFF;
+      }
+    }
+
+    .name-col {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      height: 40px;
+
+      .drag-handle svg {
+        width: 14px;
+        height: 14px;
+        display: block;
+        fill: rgba(255, 255, 255, 0.54);
+      }
+
+      .emoji {
+        font-size: 14px;
+      }
+    }
+
+    .text-right {
+      text-align: right;
+    }
+
+    .actions-cell button {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      margin-left: 8px;
+      color: rgba(255, 255, 255, 0.7);
+
+      svg {
+        width: 15px;
+        height: 15px;
+        display: block;
+      }
+
+      &:hover {
+        color: #FFFFFF;
+      }
+
+      &.delete-btn:hover {
+        color: #FF6058;
+      }
+    }
+  }
+}
