@@ -56,10 +56,10 @@
             <tr>
               <td class="name-col">
                 <div class="sport-icon-box">
-                  @if (item.iconUrl && !failedImages().has(item.id)) {
+                  @if (isImageUrl(item.iconUrl) && !failedImages().has(item.id)) {
                     <img [src]="item.iconUrl" [alt]="item.name" (error)="onImageError(item.id)" />
                   } @else {
-                    <span class="fallback-icon">🏅</span>
+                    <span class="fallback-icon">{{ item.iconUrl && !isImageUrl(item.iconUrl) ? item.iconUrl : getSportEmoji(item.name) }}</span>
                   }
                 </div>
                 <div class="sport-info">
@@ -113,15 +113,28 @@
         <div class="modal-body">
           <div class="input-field">
             <label>Sport Name *</label>
-            <input type="text" [(ngModel)]="formName" placeholder="e.g. Football" />
+            <input
+              type="text"
+              [(ngModel)]="formName"
+              (input)="onNameInput()"
+              placeholder="e.g. Swimming, Padel, Football"
+            />
           </div>
           <div class="input-field">
             <label>Description (Optional)</label>
-            <input type="text" [(ngModel)]="formDescription" placeholder="Brief sport description" />
+            <input
+              type="text"
+              [(ngModel)]="formDescription"
+              placeholder="Brief sport description"
+            />
           </div>
           <div class="input-field">
-            <label>Icon URL (Optional)</label>
-            <input type="text" [(ngModel)]="formIconUrl" placeholder="https://..." />
+            <label>Icon (URL or Emoji)</label>
+            <input
+              type="text"
+              [(ngModel)]="formIconUrl"
+              placeholder="Auto-detected emoji or https://..."
+            />
           </div>
         </div>
 

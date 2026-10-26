@@ -7,6 +7,40 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { SportsService, Sport } from '../../core/services/sports.service';
 import { SearchService } from '../../core/services/search.service';
 
+const SPORT_EMOJIS: Record<string, string> = {
+  football: '⚽',
+  soccer: '⚽',
+  calcio: '⚽',
+  basketball: '🏀',
+  basket: '🏀',
+  baseball: '⚾',
+  tennis: '🎾',
+  padel: '🎾',
+  padell: '🎾',
+  boxing: '🥊',
+  boxe: '🥊',
+  mma: '🥊',
+  cricket: '🏏',
+  hockey: '🏒',
+  golf: '⛳',
+  volleyball: '🏐',
+  pallavolo: '🏐',
+  rugby: '🏉',
+  swimming: '🏊',
+  nuoto: '🏊',
+  bow: '🏹',
+  archery: '🏹',
+  'table tennis': '🏓',
+  pingpong: '🏓',
+  badminton: '🏸',
+  snowboard: '🏂',
+  snowboarding: '🏂',
+  ski: '🎿',
+  gymnastics: '🤸',
+  cycling: '🚴',
+  running: '🏃',
+};
+
 @Component({
   selector: 'app-sports',
   standalone: true,
@@ -20,10 +54,8 @@ export class SportsComponent implements OnInit, OnDestroy {
 
   private searchSub?: Subscription;
 
-  // Set per gestire gli URL delle icone che falliscono il caricamento
   failedImages = signal<Set<string>>(new Set<string>());
 
-  // Modale Aggiungi / Modifica
   isModalOpen = signal<boolean>(false);
   isEditing = signal<boolean>(false);
   currentEditingId = signal<string | null>(null);
@@ -34,16 +66,13 @@ export class SportsComponent implements OnInit, OnDestroy {
   formError = signal<string | null>(null);
   formSubmitting = signal<boolean>(false);
 
-  // Modale Conferma Cancellazione
   deleteModalSport = signal<Sport | null>(null);
 
   ngOnInit(): void {
-    // Caricamento iniziale del catalogo dal server
     this.sportsService.getSports().subscribe({
       error: (e: any) => console.error('Errore getSports:', e),
     });
 
-    // Ricerca live server-side con debounce di 300ms
     this.searchSub = toObservable(this.searchService.searchTerm)
       .pipe(debounceTime(300), distinctUntilChanged())
       .subscribe((term) => {
@@ -53,6 +82,32 @@ export class SportsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.searchSub?.unsubscribe();
+  }
+
+  getSportEmoji(name: string): string {
+    if (!name) return '🏅';
+    const clean = name.toLowerCase().trim();
+    for (const [key, emoji] of Object.entries(SPORT_EMOJIS)) {
+      if (clean.includes(key)) {
+        return emoji;
+      }
+    }
+    return '🏅';
+  }
+
+  onNameInput(): void {
+    if (!this.formIconUrl || !this.isImageUrl(this.formIconUrl)) {
+      const match = this.getSportEmoji(this.formName);
+      if (match !== '🏅') {
+        this.formIconUrl = match;
+      }
+    }
+  }
+
+  isImageUrl(val?: string): boolean {
+    if (!val) return false;
+    const str = val.trim();
+    return str.startsWith('http://') || str.startsWith('https://') || str.startsWith('data:image/');
   }
 
   onImageError(sportId: string): void {
@@ -96,10 +151,12 @@ export class SportsComponent implements OnInit, OnDestroy {
     this.formSubmitting.set(true);
     this.formError.set(null);
 
+    const resolvedIcon = this.formIconUrl.trim() || this.getSportEmoji(this.formName);
+
     const payload = {
       name: this.formName.trim(),
       description: this.formDescription.trim() || undefined,
-      iconUrl: this.formIconUrl.trim() || undefined,
+      iconUrl: resolvedIcon,
     };
 
     if (this.isEditing() && this.currentEditingId()) {
