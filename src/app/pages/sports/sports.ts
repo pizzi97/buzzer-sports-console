@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { SportsService, Sport } from '../../core/services/sports';
+import { SportsService, Sport } from '../../core/services/sports.service';
 import { SearchService } from '../../core/services/search.service';
 
 @Component({

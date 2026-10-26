@@ -12,11 +12,14 @@ import { SearchService } from '../../core/services/search.service';
 export class HeaderComponent {
   protected searchService = inject(SearchService);
 
-  onSearchInput(event: Event): void {
+  onSearch(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.searchService.searchTerm.set(input.value);
   }
+
+  onSearchInput(event: Event): void {
+    this.onSearch(event);
+  }
 }
 
-// Alias per i test unitari
 export { HeaderComponent as Header };
