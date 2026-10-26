@@ -1,8 +1,4 @@
-@if (isAuthPage()) {
-  <!-- Pagina di Login pulita senza Header né Sidebar -->
-  <router-outlet></router-outlet>
-} @else {
-  <!-- Layout completo dell'applicazione protetta -->
+@if (showLayout()) {
   <div class="app-layout">
     <app-sidebar></app-sidebar>
     <div class="main-wrapper">
@@ -12,4 +8,6 @@
       </main>
     </div>
   </div>
+} @else {
+  <router-outlet></router-outlet>
 }

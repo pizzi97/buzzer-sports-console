@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -11,7 +11,7 @@ import { AuthService } from '../../../core/services/auth';
   templateUrl: './login.html',
   styleUrl: './login.scss',
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   private authService = inject(AuthService);
   private router = inject(Router);
 
@@ -22,6 +22,11 @@ export class LoginComponent {
   loading = signal<boolean>(false);
   errorMessage = signal<string | null>(null);
   forgotNotice = signal<boolean>(false);
+
+  ngOnInit(): void {
+    // Appena si entra o si torna indietro sulla schermata di login, azzera la sessione
+    this.authService.clearSession();
+  }
 
   togglePasswordVisibility(): void {
     this.showPassword.update((val) => !val);
@@ -55,7 +60,6 @@ export class LoginComponent {
     this.loading.set(true);
     this.errorMessage.set(null);
 
-    // Tentativo 1: Organisation123! (senza lo spazio del copia-incolla)
     this.email = 'org@buzzer.dev';
     this.password = 'Organisation123!';
 
@@ -65,7 +69,6 @@ export class LoginComponent {
         this.router.navigate(['/sports']);
       },
       error: () => {
-        // Tentativo 2: Organization123! (con la z)
         this.password = 'Organization123!';
         this.authService.login(this.email, this.password).subscribe({
           next: () => {
@@ -73,7 +76,6 @@ export class LoginComponent {
             this.router.navigate(['/sports']);
           },
           error: () => {
-            // Tentativo 3: Organisation 123! (con lo spazio letterale del PDF)
             this.password = 'Organisation 123!';
             this.authService.login(this.email, this.password).subscribe({
               next: () => {

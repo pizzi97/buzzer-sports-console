@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, computed } from '@angular/core';
 import { Router, NavigationEnd, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { filter } from 'rxjs/operators';
@@ -17,18 +17,23 @@ export class AppComponent {
   protected authService = inject(AuthService);
   private router = inject(Router);
 
-  // Segnale che indica se siamo sulla schermata di autenticazione
-  isAuthPage = signal<boolean>(false);
+  // URL corrente tracciato come segnale reattivo
+  currentUrl = signal<string>(typeof window !== 'undefined' ? window.location.pathname : '');
+
+  // Mostra Sidebar ed Header SOLO se autenticato E fuori da /login
+  showLayout = computed(() => {
+    const isLogin = this.currentUrl().includes('/login');
+    return this.authService.isAuthenticated() && !isLogin;
+  });
 
   constructor() {
     this.router.events
       .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
       .subscribe((event) => {
-        const isLogin = event.urlAfterRedirects.includes('/login') || event.url.includes('/login');
-        this.isAuthPage.set(isLogin);
+        const url = event.urlAfterRedirects || event.url;
+        this.currentUrl.set(url);
 
-        // Se l'utente torna indietro su /login, azzera la sessione in modo pulito
-        if (isLogin && this.authService.isAuthenticated()) {
+        if (url.includes('/login')) {
           this.authService.clearSession();
         }
       });
