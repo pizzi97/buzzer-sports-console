@@ -1,4 +1,4 @@
-@if (authService.isAuthenticated() && !isLoginRoute()) {
+@if (authService.isAuthenticated()) {
   <div class="layout-container">
     <app-sidebar></app-sidebar>
     <div class="main-viewport">

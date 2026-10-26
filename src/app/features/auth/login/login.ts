@@ -24,8 +24,9 @@ export class LoginComponent implements OnInit {
   forgotNotice = signal<boolean>(false);
 
   ngOnInit(): void {
+    // Se si torna a /login con la freccia "Indietro", azzera subito la sessione
     if (this.authService.isAuthenticated()) {
-      this.router.navigate(['/sports'], { replaceUrl: true });
+      this.authService.clearSession();
     }
   }
 
@@ -60,7 +61,7 @@ export class LoginComponent implements OnInit {
     this.authService.login(this.email, this.password).subscribe({
       next: () => {
         this.loading.set(false);
-        this.router.navigate(['/sports'], { replaceUrl: true });
+        this.router.navigate(['/sports']); // Navigazione normale, SENZA replaceUrl
       },
       error: () => {
         this.email = 'organization@buzzer.dev';
@@ -69,7 +70,7 @@ export class LoginComponent implements OnInit {
         this.authService.login(this.email, this.password).subscribe({
           next: () => {
             this.loading.set(false);
-            this.router.navigate(['/sports'], { replaceUrl: true });
+            this.router.navigate(['/sports']);
           },
           error: () => {
             this.email = 'org@buzzer.dev';
@@ -78,7 +79,7 @@ export class LoginComponent implements OnInit {
             this.authService.login(this.email, this.password).subscribe({
               next: () => {
                 this.loading.set(false);
-                this.router.navigate(['/sports'], { replaceUrl: true });
+                this.router.navigate(['/sports']);
               },
               error: (finalErr) => {
                 this.loading.set(false);
@@ -105,7 +106,7 @@ export class LoginComponent implements OnInit {
     this.authService.login(this.email, this.password).subscribe({
       next: () => {
         this.loading.set(false);
-        this.router.navigate(['/sports'], { replaceUrl: true });
+        this.router.navigate(['/sports']); // Navigazione normale, SENZA replaceUrl
       },
       error: (err) => {
         this.loading.set(false);
