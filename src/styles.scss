@@ -1,45 +1,117 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@300;400;700&display=swap');
-
-* {
+/* Reset Globale e Stile Base */
+*,
+*::before,
+*::after {
   box-sizing: border-box;
+}
+
+html,
+body {
   margin: 0;
   padding: 0;
-}
-
-:root {
-  /* Colors da Figma */
-  --color-dark: #131515;
-  --color-dark-lighter: #212121;
-  --color-yellow: #FFB414;
-  --color-red: #EC193C;
-  --color-gray: #3E3E3E;
-  --color-green: #2ED368;
-  --color-orange: #FF5B14;
-  --color-white: #FFFFFF;
-  --color-black: #000000;
-
-  /* Opacities & Borders */
-  --border-subtle: rgba(255, 255, 255, 0.1);
-  --border-input: rgba(255, 255, 255, 0.24);
-  --surface-tint: rgba(255, 255, 255, 0.03);
-  --surface-active: rgba(255, 255, 255, 0.1);
-  --text-muted: rgba(255, 255, 255, 0.54);
-
-  /* Layout */
-  --sidebar-width: 311px;
-  --header-height: 65px;
-}
-
-body {
-  background-color: var(--color-dark);
-  color: var(--color-white);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  overflow: hidden;
-  height: 100vh;
   width: 100vw;
+  height: 100vh;
+  min-height: 100vh;
+  overflow: hidden;
+  background-color: #131515;
+  color: #ffffff;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+/* Root Component */
+app-root {
+  display: block;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #131515;
+}
+
+/* Shell Layout a due colonne (Sidebar a sinistra, Header e Contenuti a destra) */
+.app-layout {
+  display: flex !important;
+  flex-direction: row !important;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #131515;
+
+  &.no-shell {
+    display: block !important;
+    width: 100vw;
+    height: 100vh;
+    overflow-y: auto;
+  }
+}
+
+/* Sidebar Custom Element */
+app-sidebar {
+  display: block !important;
+  width: 240px !important;
+  min-width: 240px !important;
+  max-width: 240px !important;
+  height: 100vh !important;
+  flex-shrink: 0 !important;
+  background-color: #1a1c1d;
+  z-index: 10;
+}
+
+/* Wrapper Principale a Destra */
+.main-wrapper {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 0% !important;
+  min-width: 0 !important;
+  height: 100vh !important;
+  overflow: hidden !important;
+  background-color: #131515;
+}
+
+/* Header Custom Element */
+app-header {
+  display: block !important;
+  width: 100% !important;
+  height: 64px !important;
+  min-height: 64px !important;
+  max-height: 64px !important;
+  flex-shrink: 0 !important;
+  background-color: #131515;
+  z-index: 5;
+}
+
+/* Area dei Contenuti Scrollabile */
+.page-content {
+  display: block !important;
+  flex: 1 1 0% !important;
+  width: 100% !important;
+  height: calc(100vh - 64px) !important;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background-color: #131515;
+
+  &.full-page {
+    height: 100vh !important;
+  }
+
+  /* Scrollbar personalizzata dark */
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #131515;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.25);
+  }
 }
