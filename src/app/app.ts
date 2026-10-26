@@ -15,3 +15,5 @@ import { HeaderComponent } from './layout/header/header';
 export class AppComponent {
   protected authService = inject(AuthService);
 }
+
+export { AppComponent as App };
