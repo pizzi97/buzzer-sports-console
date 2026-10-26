@@ -52,12 +52,12 @@
             <td colspan="5" class="empty-state">Loading sports catalogue from server...</td>
           </tr>
         } @else {
-          @for (item of sportsService.sports(); track item.id) {
+          @for (item of filteredSports(); track item.id) {
             <tr>
               <td class="name-col">
                 <div class="sport-icon-box">
-                  @if (item.iconUrl) {
-                    <img [src]="item.iconUrl" [alt]="item.name" />
+                  @if (item.iconUrl && !failedImages().has(item.id)) {
+                    <img [src]="item.iconUrl" [alt]="item.name" (error)="onImageError(item.id)" />
                   } @else {
                     <span class="fallback-icon">🏅</span>
                   }

@@ -1,8 +1,6 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { SportsService, Sport } from '../../core/services/sports.service';
 import { SearchService } from '../../core/services/search.service';
 
@@ -17,7 +15,19 @@ export class SportsComponent implements OnInit {
   protected sportsService = inject(SportsService);
   protected searchService = inject(SearchService);
 
-  private searchDebounce = new Subject<string>();
+  failedImages = signal<Set<string>>(new Set<string>());
+
+  // Filtra reattivamente la lista in base alla search bar dell'header
+  filteredSports = computed(() => {
+    const term = this.searchService.searchTerm().toLowerCase().trim();
+    const list = this.sportsService.sports();
+    if (!term) return list;
+    return list.filter(
+      (s) =>
+        s.name.toLowerCase().includes(term) ||
+        (s.description && s.description.toLowerCase().includes(term)),
+    );
+  });
 
   isModalOpen = signal<boolean>(false);
   isEditing = signal<boolean>(false);
@@ -38,9 +48,13 @@ export class SportsComponent implements OnInit {
     this.sportsService.fetchLiveStats().subscribe({
       error: (e: any) => console.error('Errore fetchLiveStats:', e),
     });
+  }
 
-    this.searchDebounce.pipe(debounceTime(300), distinctUntilChanged()).subscribe((term) => {
-      this.sportsService.getSports(term).subscribe();
+  onImageError(sportId: string): void {
+    this.failedImages.update((set) => {
+      const next = new Set(set);
+      next.add(sportId);
+      return next;
     });
   }
 
