@@ -1,14 +1,19 @@
-<header class="header">
-  <h1 class="page-title">Sport Management</h1>
-
-  <div class="search-box">
-    <svg class="search-ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-    </svg>
-    <input
-      type="text"
-      [value]="searchService.searchTerm()"
-      (input)="onSearch($event)"
-      placeholder="Search..." />
+<header class="app-header">
+  <div class="header-left">
+    <h1 class="page-title">Sport Management</h1>
+  </div>
+  <div class="header-right">
+    <div class="search-box">
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      <input
+        type="text"
+        placeholder="Search sports..."
+        [value]="searchService.searchTerm()"
+        (input)="onSearchInput($event)"
+      />
+    </div>
   </div>
 </header>

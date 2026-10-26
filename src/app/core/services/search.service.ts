@@ -4,5 +4,5 @@ import { Injectable, signal } from '@angular/core';
   providedIn: 'root',
 })
 export class SearchService {
-  searchTerm = signal<string>('');
+  readonly searchTerm = signal<string>('');
 }
