@@ -2,33 +2,63 @@
   display: block;
   width: 100vw;
   height: 100vh;
+  margin: 0;
+  padding: 0;
   overflow: hidden;
   background-color: #131515;
+  color: #ffffff;
 }
 
-.layout-container {
+.app-layout {
   display: flex !important;
   flex-direction: row !important;
   width: 100vw;
   height: 100vh;
   overflow: hidden;
+  background-color: #131515;
 
-  app-sidebar {
-    width: 311px;
-    min-width: 311px;
-    max-width: 311px;
-    height: 100vh;
-    flex-shrink: 0;
-    display: block;
+  &.no-shell {
+    display: block !important;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
   }
 
-  .main-viewport {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
+  app-sidebar {
+    display: block;
+    width: 240px;
+    min-width: 240px;
+    max-width: 240px;
     height: 100vh;
+    flex-shrink: 0;
+  }
+
+  .main-wrapper {
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 1 auto;
     min-width: 0;
-    overflow-y: auto;
+    height: 100vh;
+    overflow: hidden;
     background-color: #131515;
+
+    app-header {
+      display: block;
+      width: 100%;
+      height: 64px;
+      flex-shrink: 0;
+    }
+
+    .page-content {
+      flex: 1;
+      width: 100%;
+      height: calc(100vh - 64px);
+      overflow-y: auto;
+      background-color: #131515;
+
+      &.full-page {
+        height: 100vh;
+      }
+    }
   }
 }
