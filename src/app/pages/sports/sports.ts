@@ -1,16 +1,10 @@
-import { Component, inject, computed, signal } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { SportsService, Sport } from '../../core/services/sports';
 import { SearchService } from '../../core/services/search.service';
-
-export interface SportEntry {
-  id?: string;
-  name: string;
-  icon: string;
-  mainEntities: number;
-  competitions: number;
-  participants: number;
-}
 
 @Component({
   selector: 'app-sports',
@@ -19,107 +13,54 @@ export interface SportEntry {
   templateUrl: './sports.html',
   styleUrl: './sports.scss',
 })
-export class SportsComponent {
-  // protected per consentire l'accesso dal template HTML
+export class SportsComponent implements OnInit {
+  protected sportsService = inject(SportsService);
   protected searchService = inject(SearchService);
 
-  // Lista reattiva di sport
-  sports = signal<SportEntry[]>([
-    { id: '1', name: 'Football', icon: '⚽', mainEntities: 5, competitions: 12, participants: 86 },
-    {
-      id: '2',
-      name: 'Basketball',
-      icon: '🏀',
-      mainEntities: 5,
-      competitions: 10,
-      participants: 75,
-    },
-    { id: '3', name: 'Baseball', icon: '⚾', mainEntities: 3, competitions: 14, participants: 92 },
-    { id: '4', name: 'Hockey', icon: '🏒', mainEntities: 6, competitions: 8, participants: 78 },
-    { id: '5', name: 'Tennis', icon: '🎾', mainEntities: 2, competitions: 20, participants: 68 },
-    { id: '6', name: 'Rugby', icon: '🏉', mainEntities: 7, competitions: 11, participants: 81 },
-    {
-      id: '7',
-      name: 'Volleyball',
-      icon: '🏐',
-      mainEntities: 4,
-      competitions: 13,
-      participants: 79,
-    },
-    { id: '8', name: 'MMA', icon: '🥊', mainEntities: 5, competitions: 20, participants: 85 },
-    {
-      id: '9',
-      name: 'Snowboarding',
-      icon: '🏂',
-      mainEntities: 2,
-      competitions: 9,
-      participants: 74,
-    },
-    { id: '10', name: 'Boxing', icon: '🥊', mainEntities: 4, competitions: 10, participants: 72 },
-    { id: '11', name: 'Golf', icon: '⛳', mainEntities: 5, competitions: 8, participants: 65 },
-    { id: '12', name: 'Swimming', icon: '🏊', mainEntities: 3, competitions: 12, participants: 80 },
-    {
-      id: '13',
-      name: 'Gymnastics',
-      icon: '🤸',
-      mainEntities: 2,
-      competitions: 15,
-      participants: 60,
-    },
-  ]);
+  private searchDebounce = new Subject<string>();
 
-  // Modale Aggiungi / Modifica
   isModalOpen = signal<boolean>(false);
   isEditing = signal<boolean>(false);
-  currentEditingIndex = signal<number | null>(null);
+  currentEditingId = signal<string | null>(null);
 
   formName = '';
-  formIcon = '⚽';
-  formMainEntities = 0;
-  formCompetitions = 0;
-  formParticipants = 0;
+  formDescription = '';
+  formIconUrl = '';
+  formError = signal<string | null>(null);
+  formSubmitting = signal<boolean>(false);
 
-  // Statistiche dinamiche per le 4 card
-  totalSports = computed(() => this.sports().length);
-  totalMainEntities = computed(() =>
-    this.sports().reduce((acc, s) => acc + (s.mainEntities || 0), 0),
-  );
-  totalCompetitions = computed(() =>
-    this.sports().reduce((acc, s) => acc + (s.competitions || 0), 0),
-  );
-  totalParticipants = computed(() =>
-    this.sports().reduce((acc, s) => acc + (s.participants || 0), 0),
-  );
+  deleteModalSport = signal<Sport | null>(null);
 
-  // Lista filtrata tramite SearchService globale
-  sportsList = computed(() => {
-    const query = this.searchService.searchTerm().toLowerCase().trim();
-    if (!query) return this.sports();
-    return this.sports().filter((s) => s.name.toLowerCase().includes(query));
-  });
+  ngOnInit(): void {
+    this.sportsService.getSports().subscribe({
+      error: (e: any) => console.error('Errore getSports:', e),
+    });
+    this.sportsService.fetchLiveStats().subscribe({
+      error: (e: any) => console.error('Errore fetchLiveStats:', e),
+    });
+
+    this.searchDebounce.pipe(debounceTime(300), distinctUntilChanged()).subscribe((term) => {
+      this.sportsService.getSports(term).subscribe();
+    });
+  }
 
   openAddModal(): void {
     this.isEditing.set(false);
-    this.currentEditingIndex.set(null);
+    this.currentEditingId.set(null);
     this.formName = '';
-    this.formIcon = '⚽';
-    this.formMainEntities = 1;
-    this.formCompetitions = 0;
-    this.formParticipants = 0;
+    this.formDescription = '';
+    this.formIconUrl = '';
+    this.formError.set(null);
     this.isModalOpen.set(true);
   }
 
-  openEditModal(item: SportEntry): void {
-    const idx = this.sports().findIndex((s) => s.name === item.name);
-    if (idx === -1) return;
-
+  openEditModal(sport: Sport): void {
     this.isEditing.set(true);
-    this.currentEditingIndex.set(idx);
-    this.formName = item.name;
-    this.formIcon = item.icon;
-    this.formMainEntities = item.mainEntities;
-    this.formCompetitions = item.competitions;
-    this.formParticipants = item.participants;
+    this.currentEditingId.set(sport.id);
+    this.formName = sport.name;
+    this.formDescription = sport.description || '';
+    this.formIconUrl = sport.iconUrl || '';
+    this.formError.set(null);
     this.isModalOpen.set(true);
   }
 
@@ -128,33 +69,61 @@ export class SportsComponent {
   }
 
   saveSport(): void {
-    if (!this.formName.trim()) return;
+    if (!this.formName.trim()) {
+      this.formError.set('Name is required.');
+      return;
+    }
 
-    const payload: SportEntry = {
+    this.formSubmitting.set(true);
+    this.formError.set(null);
+
+    const payload = {
       name: this.formName.trim(),
-      icon: this.formIcon.trim() || '🏅',
-      mainEntities: Number(this.formMainEntities) || 0,
-      competitions: Number(this.formCompetitions) || 0,
-      participants: Number(this.formParticipants) || 0,
+      description: this.formDescription.trim() || undefined,
+      iconUrl: this.formIconUrl.trim() || undefined,
     };
 
-    if (this.isEditing() && this.currentEditingIndex() !== null) {
-      this.sports.update((list) => {
-        const copy = [...list];
-        copy[this.currentEditingIndex()!] = payload;
-        return copy;
+    if (this.isEditing() && this.currentEditingId()) {
+      this.sportsService.updateSport(this.currentEditingId()!, payload).subscribe({
+        next: () => {
+          this.formSubmitting.set(false);
+          this.closeModal();
+        },
+        error: (err: any) => {
+          this.formSubmitting.set(false);
+          this.formError.set(err?.error?.message || 'Error updating sport.');
+        },
       });
     } else {
-      this.sports.update((list) => [payload, ...list]);
+      this.sportsService.createSport(payload).subscribe({
+        next: () => {
+          this.formSubmitting.set(false);
+          this.closeModal();
+        },
+        error: (err: any) => {
+          this.formSubmitting.set(false);
+          this.formError.set(err?.error?.message || 'Error creating sport.');
+        },
+      });
     }
-
-    this.closeModal();
   }
 
-  deleteSport(name: string): void {
-    if (confirm(`Are you sure you want to delete ${name}?`)) {
-      this.sports.update((list) => list.filter((s) => s.name !== name));
-    }
+  promptDelete(sport: Sport): void {
+    this.deleteModalSport.set(sport);
+  }
+
+  cancelDelete(): void {
+    this.deleteModalSport.set(null);
+  }
+
+  confirmDelete(): void {
+    const sport = this.deleteModalSport();
+    if (!sport) return;
+
+    this.sportsService.deleteSport(sport.id).subscribe({
+      next: () => this.cancelDelete(),
+      error: () => this.cancelDelete(),
+    });
   }
 }
 
