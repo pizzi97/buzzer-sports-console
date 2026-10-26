@@ -14,113 +14,141 @@
     </div>
   </div>
 
-  <!-- 4 Stat Cards dinamiche -->
+  <!-- 4 Stat Cards: Sports, Governing Bodies, Organisations, Participants -->
   <div class="stats-grid">
     <div class="stat-card">
-      <span class="stat-val">{{ totalSports() }}</span>
+      <span class="stat-val">{{ sportsService.stats().totalSports }}</span>
       <span class="stat-lbl">SPORTS</span>
     </div>
     <div class="stat-card">
-      <span class="stat-val">{{ totalMainEntities() }}</span>
-      <span class="stat-lbl">MAIN ENTITIES</span>
+      <span class="stat-val">{{ sportsService.stats().totalGoverningBodies }}</span>
+      <span class="stat-lbl">GOVERNING BODIES</span>
     </div>
     <div class="stat-card">
-      <span class="stat-val">{{ totalCompetitions() }}</span>
-      <span class="stat-lbl">COMPETITIONS</span>
+      <span class="stat-val">{{ sportsService.stats().totalOrganisations }}</span>
+      <span class="stat-lbl">ORGANISATIONS</span>
     </div>
     <div class="stat-card">
-      <span class="stat-val">{{ totalParticipants() }}</span>
+      <span class="stat-val">{{ sportsService.stats().totalParticipants }}</span>
       <span class="stat-lbl">PARTICIPANTS</span>
     </div>
   </div>
 
-  <!-- Tabella Dati -->
+  <!-- Tabella Dati Server-Side -->
   <div class="table-container">
     <table class="data-table">
       <thead>
       <tr>
         <th>Sport</th>
-        <th>Main Entities</th>
-        <th>Competitions</th>
+        <th>Governing Bodies</th>
+        <th>Organisations</th>
         <th>Participants</th>
         <th class="text-right">Actions</th>
       </tr>
       </thead>
       <tbody>
-        @for (item of sportsList(); track item.name) {
+        @if (sportsService.loading()) {
           <tr>
-            <td class="name-col">
-              <span class="emoji">{{ item.icon }}</span>
-              <span class="sport-name">{{ item.name }}</span>
-            </td>
-            <td>{{ item.mainEntities }}</td>
-            <td>{{ item.competitions }}</td>
-            <td>{{ item.participants }}</td>
-            <td class="text-right actions-cell">
-              <button class="icon-btn" type="button" title="Edit" (click)="openEditModal(item)">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M12 20h9"></path>
-                  <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
-                </svg>
-              </button>
-              <button class="icon-btn delete-btn" type="button" title="Delete" (click)="deleteSport(item.name)">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polyline points="3 6 5 6 21 6"></polyline>
-                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                </svg>
-              </button>
-            </td>
+            <td colspan="5" class="empty-state">Loading sports catalogue from server...</td>
           </tr>
-        } @empty {
-          <tr>
-            <td colspan="5" class="empty-state">
-              No sports found matching "{{ searchService.searchTerm() }}"
-            </td>
-          </tr>
+        } @else {
+          @for (item of sportsService.sports(); track item.id) {
+            <tr>
+              <td class="name-col">
+                <div class="sport-icon-box">
+                  @if (item.iconUrl) {
+                    <img [src]="item.iconUrl" [alt]="item.name" />
+                  } @else {
+                    <span class="fallback-icon">🏅</span>
+                  }
+                </div>
+                <div class="sport-info">
+                  <span class="sport-name">{{ item.name }}</span>
+                  @if (item.description) {
+                    <span class="sport-desc">{{ item.description }}</span>
+                  }
+                </div>
+              </td>
+              <td>{{ item.governingBodiesCount ?? 0 }}</td>
+              <td>{{ item.organisationsCount ?? 0 }}</td>
+              <td>{{ item.participantsCount ?? 0 }}</td>
+              <td class="text-right actions-cell">
+                <button class="icon-btn" type="button" title="Edit" (click)="openEditModal(item)">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 20h9"></path>
+                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                  </svg>
+                </button>
+                <button class="icon-btn delete-btn" type="button" title="Delete" (click)="promptDelete(item)">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                  </svg>
+                </button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="5" class="empty-state">No sports found in the catalogue.</td>
+            </tr>
+          }
         }
       </tbody>
     </table>
   </div>
 
-  <!-- Modale Add / Edit coerente col tema scuro -->
+  <!-- Dialog Add / Edit Sport -->
   @if (isModalOpen()) {
     <div class="modal-backdrop" (click)="closeModal()">
       <div class="modal-card" (click)="$event.stopPropagation()">
         <div class="modal-header">
           <h3>{{ isEditing() ? 'Edit Sport' : 'Add New Sport' }}</h3>
-          <button class="modal-close" (click)="closeModal()">×</button>
+          <button class="modal-close" type="button" (click)="closeModal()">×</button>
         </div>
+
+        @if (formError()) {
+          <div class="form-alert">{{ formError() }}</div>
+        }
 
         <div class="modal-body">
           <div class="input-field">
-            <label>Name</label>
-            <input type="text" [(ngModel)]="formName" placeholder="e.g. Volleyball" />
+            <label>Sport Name *</label>
+            <input type="text" [(ngModel)]="formName" placeholder="e.g. Football" />
           </div>
           <div class="input-field">
-            <label>Icon (Emoji)</label>
-            <input type="text" [(ngModel)]="formIcon" placeholder="e.g. 🏐" />
+            <label>Description (Optional)</label>
+            <input type="text" [(ngModel)]="formDescription" placeholder="Brief sport description" />
           </div>
-          <div class="input-row">
-            <div class="input-field">
-              <label>Main Entities</label>
-              <input type="number" [(ngModel)]="formMainEntities" />
-            </div>
-            <div class="input-field">
-              <label>Competitions</label>
-              <input type="number" [(ngModel)]="formCompetitions" />
-            </div>
-            <div class="input-field">
-              <label>Participants</label>
-              <input type="number" [(ngModel)]="formParticipants" />
-            </div>
+          <div class="input-field">
+            <label>Icon URL (Optional)</label>
+            <input type="text" [(ngModel)]="formIconUrl" placeholder="https://..." />
           </div>
         </div>
 
         <div class="modal-actions">
-          <button class="btn-cancel" (click)="closeModal()">Cancel</button>
-          <button class="btn-save" (click)="saveSport()">
-            {{ isEditing() ? 'Save Changes' : 'Create Sport' }}
+          <button class="btn-cancel" type="button" (click)="closeModal()" [disabled]="formSubmitting()">Cancel</button>
+          <button class="btn-save" type="button" (click)="saveSport()" [disabled]="formSubmitting()">
+            {{ formSubmitting() ? 'Saving...' : isEditing() ? 'Save Changes' : 'Create Sport' }}
           </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Confirmation Dialog for Deletion -->
+  @if (deleteModalSport()) {
+    <div class="modal-backdrop" (click)="cancelDelete()">
+      <div class="modal-card modal-confirm" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>Confirm Deletion</h3>
+          <button class="modal-close" type="button" (click)="cancelDelete()">×</button>
+        </div>
+        <p class="confirm-text">
+          Are you sure you want to delete <strong>{{ deleteModalSport()?.name }}</strong>? The sport will be soft-deleted from the server.
+        </p>
+        <div class="modal-actions">
+          <button class="btn-cancel" type="button" (click)="cancelDelete()">Cancel</button>
+          <button class="btn-delete-confirm" type="button" (click)="confirmDelete()">Delete Sport</button>
         </div>
       </div>
     </div>
