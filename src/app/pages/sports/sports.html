@@ -52,7 +52,7 @@
             <td colspan="5" class="empty-state">Loading sports catalogue from server...</td>
           </tr>
         } @else {
-          @for (item of filteredSports(); track item.id) {
+          @for (item of sportsService.sports(); track item.id) {
             <tr>
               <td class="name-col">
                 <div class="sport-icon-box">

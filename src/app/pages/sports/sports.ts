@@ -1,6 +1,9 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, inject, signal, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { toObservable } from '@angular/core/rxjs-interop';
+import { Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { SportsService, Sport } from '../../core/services/sports.service';
 import { SearchService } from '../../core/services/search.service';
 
@@ -11,24 +14,16 @@ import { SearchService } from '../../core/services/search.service';
   templateUrl: './sports.html',
   styleUrl: './sports.scss',
 })
-export class SportsComponent implements OnInit {
+export class SportsComponent implements OnInit, OnDestroy {
   protected sportsService = inject(SportsService);
   protected searchService = inject(SearchService);
 
+  private searchSub?: Subscription;
+
+  // Set per gestire gli URL delle icone che falliscono il caricamento
   failedImages = signal<Set<string>>(new Set<string>());
 
-  // Filtra reattivamente la lista in base alla search bar dell'header
-  filteredSports = computed(() => {
-    const term = this.searchService.searchTerm().toLowerCase().trim();
-    const list = this.sportsService.sports();
-    if (!term) return list;
-    return list.filter(
-      (s) =>
-        s.name.toLowerCase().includes(term) ||
-        (s.description && s.description.toLowerCase().includes(term)),
-    );
-  });
-
+  // Modale Aggiungi / Modifica
   isModalOpen = signal<boolean>(false);
   isEditing = signal<boolean>(false);
   currentEditingId = signal<string | null>(null);
@@ -39,15 +34,25 @@ export class SportsComponent implements OnInit {
   formError = signal<string | null>(null);
   formSubmitting = signal<boolean>(false);
 
+  // Modale Conferma Cancellazione
   deleteModalSport = signal<Sport | null>(null);
 
   ngOnInit(): void {
+    // Caricamento iniziale del catalogo dal server
     this.sportsService.getSports().subscribe({
       error: (e: any) => console.error('Errore getSports:', e),
     });
-    this.sportsService.fetchLiveStats().subscribe({
-      error: (e: any) => console.error('Errore fetchLiveStats:', e),
-    });
+
+    // Ricerca live server-side con debounce di 300ms
+    this.searchSub = toObservable(this.searchService.searchTerm)
+      .pipe(debounceTime(300), distinctUntilChanged())
+      .subscribe((term) => {
+        this.sportsService.getSports(term).subscribe();
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.searchSub?.unsubscribe();
   }
 
   onImageError(sportId: string): void {
