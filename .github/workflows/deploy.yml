@@ -1,18 +1,20 @@
-name: CI/CD Pipeline to AWS
+name: CI Build Check
 
 on:
   push:
     branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -21,12 +23,5 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build production app
+      - name: Run build
         run: npm run build --configuration=production
-
-      - name: Deploy to AWS S3 / EC2
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-central-1
