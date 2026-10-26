@@ -1,7 +1,11 @@
-<div class="layout-container">
-  <app-sidebar></app-sidebar>
-  <main class="main-viewport">
-    <app-header></app-header>
-    <app-sports></app-sports>
-  </main>
-</div>
+@if (authService.isAuthenticated()) {
+  <div class="layout-container">
+    <app-sidebar></app-sidebar>
+    <div class="main-viewport">
+      <app-header></app-header>
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+} @else {
+  <router-outlet></router-outlet>
+}

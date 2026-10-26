@@ -1,6 +1,6 @@
 import { Component, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SearchService } from '../../services/search.service';
+import { SearchService } from '../../core/services/search.service';
 
 interface SportEntry {
   name: string;

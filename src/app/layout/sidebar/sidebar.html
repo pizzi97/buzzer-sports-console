@@ -1,107 +1,200 @@
-<aside class="sidebar" [class.collapsed]="isCollapsed()">
-  <!-- Top Left Logo Section (Figma Frame Layer_1 & Frame 4882) -->
-  <div class="logo-row">
-    @if (!isCollapsed()) {
-      <div class="brand-container">
-        <!-- SVG Ufficiale Buzzer Logo: 'B' con Lightning Bolt -->
-        <svg class="buzzer-logo-svg" width="28" height="28" viewBox="0 0 24 24" fill="none">
-          <path d="M4 3C4 2.44772 4.44772 2 5 2H14.5C17.5376 2 20 4.46243 20 7.5C20 9.15574 19.2662 10.6399 18.1065 11.6421C19.8248 12.6398 21 14.4371 21 16.5C21 19.5376 18.5376 22 15.5 22H5C4.44772 22 4 21.5523 4 21V3Z" fill="#FFB414"/>
-          <!-- Cutout fulmine interno nero -->
-          <path d="M12.5 5L7 13H12L10.5 19L17 11H11.5L12.5 5Z" fill="#131515"/>
+<aside class="sidebar-container" [class.collapsed]="isCollapsed()">
+  <!-- Top Brand / Logo -->
+  <div class="sidebar-header">
+    <div class="brand-group">
+      <div class="brand-logo">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M13 2L3 14h8l-1 8 11-12h-8l1-8z" />
         </svg>
-
-        <div class="brand-text-group">
-          <span class="brand-name">Buzzer</span>
-          <span class="brand-sub">Admin Console</span>
-        </div>
       </div>
-    }
+      @if (!isCollapsed()) {
+        <div class="brand-meta">
+          <span class="brand-name">Buzzer</span>
+          <span class="brand-tag">Admin Console</span>
+        </div>
+      }
+    </div>
 
-    <!-- Tasto Collapse Figma (ic_colapse) -->
-    <button class="btn-toggle" (click)="toggleCollapse()" type="button" title="Collapse sidebar">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-        <rect x="2" y="2" width="20" height="20" rx="3.5" stroke="rgba(255,255,255,0.54)" stroke-width="1.8"/>
-        <line x1="8.5" y1="2" x2="8.5" y2="22" stroke="rgba(255,255,255,0.54)" stroke-width="1.8"/>
-        <path d="M15.5 9L12.5 12L15.5 15" stroke="rgba(255,255,255,0.54)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    <button type="button" class="collapse-btn" (click)="toggleCollapse()" title="Toggle sidebar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect>
+        <line x1="9" y1="3" x2="9" y2="21"></line>
+        <path d="m14 15-3-3 3-3"></path>
       </svg>
     </button>
   </div>
 
-  <!-- Menu container -->
-  <div class="menu-container">
-    <!-- MAIN SECTION -->
+  <!-- Navigation Sections -->
+  <nav class="sidebar-nav">
+    <!-- SECTION: MAIN -->
     <div class="nav-section">
       @if (!isCollapsed()) {
-        <div class="section-header">
-          <span class="section-title">MAIN</span>
-          <svg class="dropdown-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.54)" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        <div class="section-title">
+          <span>MAIN</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
         </div>
       }
-      <a class="nav-link">
-        <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>
-        @if (!isCollapsed()) { <span class="label">Dashboard</span> }
-      </a>
-      <a class="nav-link">
-        <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        @if (!isCollapsed()) { <span class="label">Users</span> }
-      </a>
-      <a class="nav-link">
-        <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg>
-        @if (!isCollapsed()) { <span class="label">Registrations</span> }
-      </a>
-      <a class="nav-link">
-        <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        @if (!isCollapsed()) { <span class="label">Reporting</span> }
-      </a>
-      <a class="nav-link">
-        <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/><line x1="2" y1="2" x2="22" y2="22"/></svg>
-        @if (!isCollapsed()) { <span class="label">Restricted Devices</span> }
-      </a>
-      <a class="nav-link">
-        <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="9" y1="10" x2="15" y2="10"/></svg>
-        @if (!isCollapsed()) { <span class="label">Restricted Words</span> }
-      </a>
+
+      <ul class="nav-list">
+        <li>
+          <a class="nav-item disabled" href="javascript:void(0)">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="20" x2="18" y2="10"></line>
+              <line x1="12" y1="20" x2="12" y2="4"></line>
+              <line x1="6" y1="20" x2="6" y2="14"></line>
+            </svg>
+            @if (!isCollapsed()) { <span>Dashboard</span> }
+          </a>
+        </li>
+        <li>
+          <a class="nav-item disabled" href="javascript:void(0)">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+            @if (!isCollapsed()) { <span>Users</span> }
+          </a>
+        </li>
+        <li>
+          <a class="nav-item disabled" href="javascript:void(0)">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+              <rect width="8" height="4" x="8" y="2" rx="1" ry="1"></rect>
+            </svg>
+            @if (!isCollapsed()) { <span>Registrations</span> }
+          </a>
+        </li>
+        <li>
+          <a class="nav-item disabled" href="javascript:void(0)">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            @if (!isCollapsed()) { <span>Reporting</span> }
+          </a>
+        </li>
+        <li>
+          <a class="nav-item disabled" href="javascript:void(0)">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect width="14" height="20" x="5" y="2" rx="2" ry="2"></rect>
+              <line x1="2" y1="2" x2="22" y2="22"></line>
+            </svg>
+            @if (!isCollapsed()) { <span>Restricted Devices</span> }
+          </a>
+        </li>
+        <li>
+          <a class="nav-item disabled" href="javascript:void(0)">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path>
+              <line x1="9" y1="10" x2="15" y2="10"></line>
+            </svg>
+            @if (!isCollapsed()) { <span>Restricted Words</span> }
+          </a>
+        </li>
+      </ul>
     </div>
 
-    <!-- CONTENT SECTION -->
+    <!-- SECTION: CONTENT -->
     <div class="nav-section">
       @if (!isCollapsed()) {
-        <div class="section-header">
-          <span class="section-title">CONTENT</span>
-          <svg class="dropdown-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.54)" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        <div class="section-title">
+          <span>CONTENT</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
         </div>
       }
-      <a class="nav-link">
-        <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
-        @if (!isCollapsed()) { <span class="label">Verifications</span> }
-      </a>
-      <a class="nav-link">
-        <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
-        @if (!isCollapsed()) { <span class="label">Videos</span> }
-      </a>
-      <a class="nav-link">
-        <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-        @if (!isCollapsed()) { <span class="label">Athlete Blog Requests</span> }
-      </a>
-      <a class="nav-link">
-        <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
-        @if (!isCollapsed()) { <span class="label">Referrals</span> }
-      </a>
-      <a class="nav-link active">
-        <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="12" y1="5" x2="12" y2="19"/><circle cx="12" cy="12" r="3"/><path d="M2 9h3v6H2M22 9h-3v6h3"/></svg>
-        @if (!isCollapsed()) { <span class="label">Sports</span> }
-      </a>
+
+      <ul class="nav-list">
+        <li>
+          <a class="nav-item disabled" href="javascript:void(0)">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path>
+              <path d="m9 12 2 2 4-4"></path>
+            </svg>
+            @if (!isCollapsed()) { <span>Verifications</span> }
+          </a>
+        </li>
+        <li>
+          <a class="nav-item disabled" href="javascript:void(0)">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="m22 8-6 4 6 4V8Z"></path>
+              <rect width="14" height="12" x="2" y="6" rx="2" ry="2"></rect>
+            </svg>
+            @if (!isCollapsed()) { <span>Videos</span> }
+          </a>
+        </li>
+        <li>
+          <a class="nav-item disabled" href="javascript:void(0)">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 20h9"></path>
+              <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
+            </svg>
+            @if (!isCollapsed()) { <span>Athlete Blog Requests</span> }
+          </a>
+        </li>
+        <li>
+          <a class="nav-item disabled" href="javascript:void(0)">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <line x1="19" y1="8" x2="19" y2="14"></line>
+              <line x1="22" y1="11" x2="16" y2="11"></line>
+            </svg>
+            @if (!isCollapsed()) { <span>Referrals</span> }
+          </a>
+        </li>
+
+        <!-- Sports (Attivo con RouterLink) -->
+        <li>
+          <a
+            routerLink="/sports"
+            routerLinkActive="active"
+            class="nav-item">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect width="20" height="12" x="2" y="6" rx="2"></rect>
+              <circle cx="12" cy="12" r="2"></circle>
+              <path d="M6 12h.01M18 12h.01"></path>
+            </svg>
+            @if (!isCollapsed()) { <span>Sports</span> }
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- User Profile Card Dinamica & Forzata -->
+  <div class="user-profile-wrapper">
+    <div class="user-profile-card">
+      <div class="avatar-container">
+        <div class="user-avatar">
+          {{ userInitial() }}
+        </div>
+        <span class="status-dot"></span>
+      </div>
+
+      @if (!isCollapsed()) {
+        <div class="user-meta">
+          <span class="role-badge">{{ userRole() }}</span>
+          <span class="user-email" [title]="userEmail()">{{ userEmail() }}</span>
+        </div>
+
+        <button
+          type="button"
+          class="sign-out-btn"
+          (click)="logout()"
+          title="Sign out">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+        </button>
+      }
     </div>
   </div>
-
-  <!-- Profilo Utente Footer -->
-  @if (!isCollapsed()) {
-    <div class="user-footer">
-      <div class="avatar">A</div>
-      <div class="user-info">
-        <span class="email">admin&#64;buzzerfan.com</span>
-        <a class="signout">Sign out</a>
-      </div>
-    </div>
-  }
 </aside>
