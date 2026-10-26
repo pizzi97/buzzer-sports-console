@@ -1,8 +1,7 @@
-import { Component, OnInit, inject, signal, OnDestroy } from '@angular/core';
-import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { Component, OnInit, inject, signal, OnDestroy, Injector, effect } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { toObservable } from '@angular/core/rxjs-interop';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { SportsService, Sport } from '../../core/services/sports.service';
 import { SearchService } from '../../core/services/search.service';
@@ -44,7 +43,7 @@ const SPORT_EMOJIS: Record<string, string> = {
 @Component({
   selector: 'app-sports',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgOptimizedImage],
+  imports: [CommonModule, FormsModule],
   templateUrl: './sports.html',
   styleUrl: './sports.scss',
 })
@@ -52,6 +51,7 @@ export class SportsComponent implements OnInit, OnDestroy {
   protected sportsService = inject(SportsService);
   protected searchService = inject(SearchService);
 
+  private searchSubject = new Subject<string>();
   private searchSub?: Subscription;
 
   failedImages = signal<Set<string>>(new Set<string>());
@@ -68,12 +68,20 @@ export class SportsComponent implements OnInit, OnDestroy {
 
   deleteModalSport = signal<Sport | null>(null);
 
+  constructor() {
+    // Si aggancia al segnale dell'header senza violare l'injection context
+    effect(() => {
+      const term = this.searchService.searchTerm();
+      this.searchSubject.next(term);
+    });
+  }
+
   ngOnInit(): void {
     this.sportsService.getSports().subscribe({
       error: (e: any) => console.error('Errore getSports:', e),
     });
 
-    this.searchSub = toObservable(this.searchService.searchTerm)
+    this.searchSub = this.searchSubject
       .pipe(debounceTime(300), distinctUntilChanged())
       .subscribe((term) => {
         this.sportsService.getSports(term).subscribe();
@@ -106,7 +114,6 @@ export class SportsComponent implements OnInit, OnDestroy {
 
   isImageUrl(val?: string): boolean {
     if (!val) return false;
-    // Regex per verificare http/https evitando l'avviso 'HTTP links are not secure'
     return /^https?:\/\//i.test(val.trim());
   }
 

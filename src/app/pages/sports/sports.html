@@ -58,9 +58,8 @@
                 <div class="sport-icon-box">
                   @if (isImageUrl(item.iconUrl) && !failedImages().has(item.id)) {
                     <img
-                      [ngSrc]="item.iconUrl!"
-                      width="32"
-                      height="32"
+                      [src]="item.iconUrl"
+                      loading="lazy"
                       [alt]="item.name"
                       (error)="onImageError(item.id)"
                     />
