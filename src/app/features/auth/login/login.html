@@ -1,11 +1,9 @@
 <div class="login-wrapper">
-  <!-- Sfondo luminoso e griglia decorativa -->
   <div class="ambient-glow glow-top"></div>
   <div class="ambient-glow glow-bottom"></div>
   <div class="grid-overlay"></div>
 
   <div class="login-container">
-    <!-- Brand Header -->
     <header class="brand-header">
       <div class="logo-box">
         <svg viewBox="0 0 24 24" fill="currentColor">
@@ -16,14 +14,12 @@
       <span class="brand-subtitle">SPORTS MANAGEMENT CONSOLE</span>
     </header>
 
-    <!-- Login Card -->
     <main class="login-card">
       <div class="card-header">
         <h2>Welcome Back</h2>
         <p>Sign in to manage sports, organisations, and competitions</p>
       </div>
 
-      <!-- Quick Demo Access Container (Griglia 2x2 simmetrica) -->
       <section class="demo-box">
         <div class="demo-header">
           <span class="demo-label">Quick Demo Access:</span>
@@ -42,14 +38,13 @@
             <span class="dot"></span>
             <span class="chip-text">Viewer</span>
           </button>
-          <button type="button" class="chip chip-org" (click)="quickLogin('org@buzzer.dev', 'Org123!')">
+          <button type="button" class="chip chip-org" (click)="quickLoginOrg()">
             <span class="dot"></span>
             <span class="chip-text">Organisation</span>
           </button>
         </div>
       </section>
 
-      <!-- Info Banner per Forgot Password -->
       @if (forgotNotice()) {
         <div class="info-banner">
           <div class="info-content">
@@ -58,13 +53,12 @@
               <line x1="12" y1="16" x2="12" y2="12"></line>
               <line x1="12" y1="8" x2="12.01" y2="8"></line>
             </svg>
-            <span>Il reset password è disabilitato in demo. Clicca su uno dei ruoli in alto per accedere.</span>
+            <span>Il reset password è disabilitato in demo. Clicca su uno dei ruoli per accedere.</span>
           </div>
           <button type="button" class="close-banner" (click)="closeForgotNotice()">✕</button>
         </div>
       }
 
-      <!-- Error Banner -->
       @if (errorMessage()) {
         <div class="error-banner">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -76,7 +70,6 @@
         </div>
       }
 
-      <!-- Form -->
       <form (ngSubmit)="onSubmit()" class="login-form">
         <div class="form-group">
           <label for="email">Email Address</label>
@@ -157,7 +150,6 @@
       </form>
     </main>
 
-    <!-- Footer con Status Pulse (ora pienamente visibile) -->
     <footer class="login-footer">
       <span>Buzzer Sports Management Console</span>
       <span class="dot-separator">•</span>

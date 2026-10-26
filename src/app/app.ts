@@ -1,5 +1,7 @@
-import { Component, inject } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, inject, signal } from '@angular/core';
+import { Router, NavigationEnd, RouterOutlet } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { filter } from 'rxjs/operators';
 import { AuthService } from './core/services/auth';
 import { SidebarComponent } from './layout/sidebar/sidebar';
 import { HeaderComponent } from './layout/header/header';
@@ -7,13 +9,22 @@ import { HeaderComponent } from './layout/header/header';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, SidebarComponent, HeaderComponent],
+  imports: [CommonModule, RouterOutlet, SidebarComponent, HeaderComponent],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
 export class AppComponent {
-  // Aggiungi questa riga per rendere il servizio accessibile al template
-  readonly authService = inject(AuthService);
-}
+  protected authService = inject(AuthService);
+  private router = inject(Router);
 
-export { AppComponent as App };
+  isLoginRoute = signal<boolean>(false);
+
+  constructor() {
+    this.router.events
+      .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
+      .subscribe((e) => {
+        const url = e.urlAfterRedirects || e.url;
+        this.isLoginRoute.set(url.includes('/login'));
+      });
+  }
+}
