@@ -3,27 +3,38 @@
     <div class="left-actions">
       <button class="btn-pill" type="button">Sport</button>
     </div>
+    <div class="right-actions">
+      <button class="btn-add" type="button" (click)="openAddModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        <span>Add Sport</span>
+      </button>
+    </div>
   </div>
 
+  <!-- 4 Stat Cards dinamiche -->
   <div class="stats-grid">
     <div class="stat-card">
-      <span class="stat-val">52</span>
+      <span class="stat-val">{{ totalSports() }}</span>
       <span class="stat-lbl">SPORTS</span>
     </div>
     <div class="stat-card">
-      <span class="stat-val">241</span>
+      <span class="stat-val">{{ totalMainEntities() }}</span>
       <span class="stat-lbl">MAIN ENTITIES</span>
     </div>
     <div class="stat-card">
-      <span class="stat-val">1.347</span>
+      <span class="stat-val">{{ totalCompetitions() }}</span>
       <span class="stat-lbl">COMPETITIONS</span>
     </div>
     <div class="stat-card">
-      <span class="stat-val">12.456</span>
+      <span class="stat-val">{{ totalParticipants() }}</span>
       <span class="stat-lbl">PARTICIPANTS</span>
     </div>
   </div>
 
+  <!-- Tabella Dati -->
   <div class="table-container">
     <table class="data-table">
       <thead>
@@ -46,12 +57,72 @@
             <td>{{ item.competitions }}</td>
             <td>{{ item.participants }}</td>
             <td class="text-right actions-cell">
-              <button class="icon-btn" type="button" title="Edit">✏️</button>
-              <button class="icon-btn delete-btn" type="button" title="Delete">🗑️</button>
+              <button class="icon-btn" type="button" title="Edit" (click)="openEditModal(item)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 20h9"></path>
+                  <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                </svg>
+              </button>
+              <button class="icon-btn delete-btn" type="button" title="Delete" (click)="deleteSport(item.name)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+              </button>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="5" class="empty-state">
+              No sports found matching "{{ searchService.searchTerm() }}"
             </td>
           </tr>
         }
       </tbody>
     </table>
   </div>
+
+  <!-- Modale Add / Edit coerente col tema scuro -->
+  @if (isModalOpen()) {
+    <div class="modal-backdrop" (click)="closeModal()">
+      <div class="modal-card" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>{{ isEditing() ? 'Edit Sport' : 'Add New Sport' }}</h3>
+          <button class="modal-close" (click)="closeModal()">×</button>
+        </div>
+
+        <div class="modal-body">
+          <div class="input-field">
+            <label>Name</label>
+            <input type="text" [(ngModel)]="formName" placeholder="e.g. Volleyball" />
+          </div>
+          <div class="input-field">
+            <label>Icon (Emoji)</label>
+            <input type="text" [(ngModel)]="formIcon" placeholder="e.g. 🏐" />
+          </div>
+          <div class="input-row">
+            <div class="input-field">
+              <label>Main Entities</label>
+              <input type="number" [(ngModel)]="formMainEntities" />
+            </div>
+            <div class="input-field">
+              <label>Competitions</label>
+              <input type="number" [(ngModel)]="formCompetitions" />
+            </div>
+            <div class="input-field">
+              <label>Participants</label>
+              <input type="number" [(ngModel)]="formParticipants" />
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn-cancel" (click)="closeModal()">Cancel</button>
+          <button class="btn-save" (click)="saveSport()">
+            {{ isEditing() ? 'Save Changes' : 'Create Sport' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
 </div>

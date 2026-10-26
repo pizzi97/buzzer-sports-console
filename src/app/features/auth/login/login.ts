@@ -24,7 +24,6 @@ export class LoginComponent implements OnInit {
   forgotNotice = signal<boolean>(false);
 
   ngOnInit(): void {
-    // Se si torna a /login con la freccia "Indietro", azzera subito la sessione
     if (this.authService.isAuthenticated()) {
       this.authService.clearSession();
     }
@@ -51,25 +50,8 @@ export class LoginComponent implements OnInit {
   }
 
   quickLoginOrg(): void {
-    this.forgotNotice.set(false);
-    this.loading.set(true);
-    this.errorMessage.set(null);
-
-    this.email = 'organisation@buzzer.dev';
-    this.password = 'Organisation123!';
-
-    this.authService.login(this.email, this.password).subscribe({
-      next: () => {
-        this.loading.set(false);
-        this.router.navigate(['/sports']);
-      },
-      error: (err) => {
-        this.loading.set(false);
-        this.errorMessage.set(
-          err.error?.message || 'Impossibile accedere con account Organisation.',
-        );
-      },
-    });
+    // Credenziali ufficiali dal PDF: org@buzzer.dev / Organisation 123!
+    this.quickLogin('org@buzzer.dev', 'Organisation 123!');
   }
 
   onSubmit(): void {
@@ -84,11 +66,14 @@ export class LoginComponent implements OnInit {
     this.authService.login(this.email, this.password).subscribe({
       next: () => {
         this.loading.set(false);
-        this.router.navigate(['/sports']); // Navigazione normale, SENZA replaceUrl
+        this.router.navigate(['/sports']);
       },
       error: (err) => {
         this.loading.set(false);
-        this.errorMessage.set(err.error?.message || 'Credenziali non valide o errore del server.');
+        this.errorMessage.set(
+          err.error?.message ||
+            'Credenziali errate o server in fase di riavvio (Render free tier).',
+        );
       },
     });
   }

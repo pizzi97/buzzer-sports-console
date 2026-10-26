@@ -42,6 +42,12 @@
     font-size: 10px;
     color: #FFFFFF;
     cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.4);
+    }
 
     svg {
       width: 12px;
@@ -172,8 +178,8 @@
       color: rgba(255, 255, 255, 0.7);
 
       svg {
-        width: 15px;
-        height: 15px;
+        width: 14px;
+        height: 14px;
         display: block;
       }
 
@@ -183,6 +189,136 @@
 
       &.delete-btn:hover {
         color: #FF6058;
+      }
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 32px 12px;
+      color: rgba(255, 255, 255, 0.4);
+      font-size: 12px;
+    }
+  }
+}
+
+// Modal Dark Theme
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+
+  .modal-card {
+    background: #181b1b;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 12px;
+    width: 100%;
+    max-width: 420px;
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      h3 {
+        margin: 0;
+        font-size: 14px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        color: #FFFFFF;
+      }
+
+      .modal-close {
+        background: transparent;
+        border: none;
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 20px;
+        cursor: pointer;
+        &:hover {
+          color: #fff;
+        }
+      }
+    }
+
+    .modal-body {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+
+      .input-row {
+        display: flex;
+        gap: 10px;
+      }
+
+      .input-field {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+
+        label {
+          font-size: 10px;
+          color: rgba(255, 255, 255, 0.54);
+          font-family: 'Inter', sans-serif;
+          text-transform: uppercase;
+          letter-spacing: 0.1em;
+        }
+
+        input {
+          background: #131515;
+          border: 1px solid rgba(255, 255, 255, 0.16);
+          border-radius: 6px;
+          padding: 8px 10px;
+          color: #fff;
+          font-size: 12px;
+          font-family: 'Inter', sans-serif;
+          outline: none;
+
+          &:focus {
+            border-color: rgba(255, 255, 255, 0.5);
+          }
+        }
+      }
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 8px;
+
+      button {
+        padding: 6px 14px;
+        border-radius: 6px;
+        font-size: 11px;
+        font-family: 'Inter', sans-serif;
+        cursor: pointer;
+      }
+
+      .btn-cancel {
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: rgba(255, 255, 255, 0.7);
+        &:hover {
+          color: #fff;
+        }
+      }
+
+      .btn-save {
+        background: #f59e0b;
+        border: none;
+        color: #000;
+        font-weight: 600;
+        &:hover {
+          background: #fbbf24;
+        }
       }
     }
   }
