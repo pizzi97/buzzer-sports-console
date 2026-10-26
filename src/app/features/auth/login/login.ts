@@ -61,35 +61,13 @@ export class LoginComponent implements OnInit {
     this.authService.login(this.email, this.password).subscribe({
       next: () => {
         this.loading.set(false);
-        this.router.navigate(['/sports']); // Navigazione normale, SENZA replaceUrl
+        this.router.navigate(['/sports']);
       },
-      error: () => {
-        this.email = 'organization@buzzer.dev';
-        this.password = 'Organization123!';
-
-        this.authService.login(this.email, this.password).subscribe({
-          next: () => {
-            this.loading.set(false);
-            this.router.navigate(['/sports']);
-          },
-          error: () => {
-            this.email = 'org@buzzer.dev';
-            this.password = 'Org123!';
-
-            this.authService.login(this.email, this.password).subscribe({
-              next: () => {
-                this.loading.set(false);
-                this.router.navigate(['/sports']);
-              },
-              error: (finalErr) => {
-                this.loading.set(false);
-                this.errorMessage.set(
-                  finalErr.error?.message || 'Impossibile accedere con account Organisation demo.',
-                );
-              },
-            });
-          },
-        });
+      error: (err) => {
+        this.loading.set(false);
+        this.errorMessage.set(
+          err.error?.message || 'Impossibile accedere con account Organisation.',
+        );
       },
     });
   }
