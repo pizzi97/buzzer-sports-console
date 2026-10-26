@@ -57,7 +57,13 @@
               <td class="name-col">
                 <div class="sport-icon-box">
                   @if (isImageUrl(item.iconUrl) && !failedImages().has(item.id)) {
-                    <img [src]="item.iconUrl" [alt]="item.name" (error)="onImageError(item.id)" />
+                    <img
+                      [ngSrc]="item.iconUrl!"
+                      width="32"
+                      height="32"
+                      [alt]="item.name"
+                      (error)="onImageError(item.id)"
+                    />
                   } @else {
                     <span class="fallback-icon">{{ item.iconUrl && !isImageUrl(item.iconUrl) ? item.iconUrl : getSportEmoji(item.name) }}</span>
                   }

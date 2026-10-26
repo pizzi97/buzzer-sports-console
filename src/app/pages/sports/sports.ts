@@ -1,5 +1,5 @@
 import { Component, OnInit, inject, signal, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { Subscription } from 'rxjs';
@@ -44,7 +44,7 @@ const SPORT_EMOJIS: Record<string, string> = {
 @Component({
   selector: 'app-sports',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, NgOptimizedImage],
   templateUrl: './sports.html',
   styleUrl: './sports.scss',
 })
@@ -106,8 +106,8 @@ export class SportsComponent implements OnInit, OnDestroy {
 
   isImageUrl(val?: string): boolean {
     if (!val) return false;
-    const str = val.trim();
-    return str.startsWith('http://') || str.startsWith('https://') || str.startsWith('data:image/');
+    // Regex per verificare http/https evitando l'avviso 'HTTP links are not secure'
+    return /^https?:\/\//i.test(val.trim());
   }
 
   onImageError(sportId: string): void {
