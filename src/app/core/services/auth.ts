@@ -1,7 +1,7 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable, tap } from 'rxjs';
+import { Observable, tap, catchError, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -26,6 +26,30 @@ export class AuthService {
 
   readonly isAuthenticated = computed(() => !!this.tokenSignal());
 
+  getToken(): string | null {
+    return (
+      this.tokenSignal() ||
+      (typeof window !== 'undefined' ? localStorage.getItem(this.TOKEN_KEY) : null)
+    );
+  }
+
+  fetchCurrentUser(): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/auth/me`).pipe(
+      tap((res) => {
+        const user = res?.data?.user || res?.data || res?.user || res;
+        if (user) {
+          if (typeof window !== 'undefined') {
+            localStorage.setItem(this.USER_KEY, JSON.stringify(user));
+          }
+          this.currentUser.set(user);
+        }
+      }),
+      catchError(() => {
+        return of(this.currentUser());
+      }),
+    );
+  }
+
   login(email: string, pass: string): Observable<any> {
     return this.http.post<any>(`${this.API_URL}/auth/login`, { email, password: pass }).pipe(
       tap((res) => {
@@ -45,7 +69,6 @@ export class AuthService {
     );
   }
 
-  // Azzera storage e stato reattivo
   clearSession(): void {
     if (typeof window !== 'undefined') {
       localStorage.removeItem(this.TOKEN_KEY);
