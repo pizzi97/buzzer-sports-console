@@ -8,7 +8,7 @@ export interface User {
   id: string;
   email: string;
   name: string;
-  role: 'admin' | 'Operator' | 'VIEWER' | 'organisation' | string;
+  role: string;
 }
 
 @Injectable({
@@ -18,7 +18,6 @@ export class AuthService {
   private http = inject(HttpClient);
   private router = inject(Router);
 
-  // Usa tassativamente l'endpoint configurato nell'environment
   private readonly API_URL = environment.apiUrl;
   private readonly TOKEN_KEY = 'buzzer_token';
   private readonly USER_KEY = 'buzzer_user';
@@ -46,10 +45,8 @@ export class AuthService {
     return this.http.get<any>(`${this.API_URL}/auth/me`).pipe(
       tap((res) => {
         const user = res?.data?.user || res?.data || res?.user || res;
-        if (user) {
-          if (typeof window !== 'undefined') {
-            localStorage.setItem(this.USER_KEY, JSON.stringify(user));
-          }
+        if (user && typeof window !== 'undefined') {
+          localStorage.setItem(this.USER_KEY, JSON.stringify(user));
           this.currentUser.set(user);
         }
       }),
@@ -60,8 +57,10 @@ export class AuthService {
   login(email: string, pass: string): Observable<any> {
     return this.http.post<any>(`${this.API_URL}/auth/login`, { email, password: pass }).pipe(
       tap((res) => {
+        // Estrae il token da qualsiasi formato restituito
         const token = res?.accessToken || res?.token || res?.data?.accessToken || res?.data?.token;
-        const user = res?.user || res?.data?.user;
+
+        const user = res?.user || res?.data?.user || res?.data;
 
         if (token) {
           if (typeof window !== 'undefined') {

@@ -1,14 +1,17 @@
 import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
 import { AuthService } from '../services/auth';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
+  const router = inject(Router);
   const token = authService.getToken();
 
   let authReq = req;
-  if (token) {
+  // Non allegare il token alla chiamata di login o register
+  if (token && !req.url.includes('/auth/login') && !req.url.includes('/auth/register')) {
     authReq = req.clone({
       setHeaders: {
         Authorization: `Bearer ${token}`,
@@ -18,8 +21,9 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(authReq).pipe(
     catchError((error: HttpErrorResponse) => {
-      if (error.status === 401) {
-        authService.logout();
+      if (error.status === 401 && !req.url.includes('/auth/login')) {
+        authService.clearSession();
+        router.navigate(['/login']);
       }
       return throwError(() => error);
     }),
