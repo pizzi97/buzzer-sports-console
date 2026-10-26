@@ -43,28 +43,19 @@ export class SportsService {
   fetchLiveStats(): Observable<any> {
     const p = new HttpParams().set('limit', '1');
 
-    return forkJoin({
-      sportsRes: this.http
-        .get<any>(`${this.API_URL}/organizations/sports`, { params: p })
-        .pipe(catchError(() => of({ meta: { total: 0 } }))),
-      govBodiesRes: this.http
-        .get<any>(`${this.API_URL}/organizations/governing-bodies`, { params: p })
-        .pipe(catchError(() => of({ meta: { total: 0 } }))),
-      orgsRes: this.http
-        .get<any>(`${this.API_URL}/organizations`, { params: p })
-        .pipe(catchError(() => of({ meta: { total: 0 } }))),
-      participantsRes: this.http
-        .get<any>(`${this.API_URL}/athletes`, { params: p })
-        .pipe(catchError(() => of({ meta: { total: 0 } }))),
-    }).pipe(
-      tap(({ sportsRes, govBodiesRes, orgsRes, participantsRes }: any) => {
-        this.stats.set({
-          totalSports: sportsRes?.meta?.total ?? sportsRes?.total ?? 0,
-          totalGoverningBodies: govBodiesRes?.meta?.total ?? govBodiesRes?.total ?? 0,
-          totalOrganisations: orgsRes?.meta?.total ?? orgsRes?.total ?? 0,
-          totalParticipants: participantsRes?.meta?.total ?? participantsRes?.total ?? 0,
-        });
-      })
+    // Interroga solo la collection degli Sports confermata sul backend
+    return this.http.get<any>(`${this.API_URL}/organizations/sports`, { params: p }).pipe(
+      tap((res: any) => {
+        const totalSports =
+          res?.meta?.total ?? res?.total ?? (Array.isArray(res?.data) ? res.data.length : 0);
+
+        this.stats.update((prev) => ({
+          ...prev,
+          totalSports: totalSports,
+          // I restanti totali rimangono a 0 o al valore aggregato finché non colleghiamo i path di Task 4
+        }));
+      }),
+      catchError(() => of(null)),
     );
   }
 
@@ -98,25 +89,32 @@ export class SportsService {
       catchError(() => {
         this.loading.set(false);
         return of([]);
-      })
+      }),
     );
   }
 
-  createSport(payload: { name: string; description?: string; iconUrl?: string }): Observable<Sport> {
+  createSport(payload: {
+    name: string;
+    description?: string;
+    iconUrl?: string;
+  }): Observable<Sport> {
     return this.http.post<Sport>(`${this.API_URL}/organizations/sports`, payload).pipe(
       tap(() => {
         this.getSports().subscribe();
         this.fetchLiveStats().subscribe();
-      })
+      }),
     );
   }
 
-  updateSport(id: string, payload: { name: string; description?: string; iconUrl?: string }): Observable<Sport> {
+  updateSport(
+    id: string,
+    payload: { name: string; description?: string; iconUrl?: string },
+  ): Observable<Sport> {
     return this.http.patch<Sport>(`${this.API_URL}/organizations/sports/${id}`, payload).pipe(
       tap(() => {
         this.getSports().subscribe();
         this.fetchLiveStats().subscribe();
-      })
+      }),
     );
   }
 
@@ -125,7 +123,7 @@ export class SportsService {
       tap(() => {
         this.getSports().subscribe();
         this.fetchLiveStats().subscribe();
-      })
+      }),
     );
   }
 }
