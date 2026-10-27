@@ -158,12 +158,44 @@ export class SportsComponent implements OnInit, OnDestroy {
     this.formSubmitting.set(true);
     this.formError.set(null);
 
-    const resolvedIcon = this.formIconUrl.trim() || this.getSportEmoji(this.formName);
+    // Invia iconUrl SOLO se è un vero URL web http/https valido
+    const trimmedIcon = this.formIconUrl.trim();
+    const hasValidHttpUrl = /^https?:\/\/.+/i.test(trimmedIcon);
 
-    const payload = {
+    const payload: { name: string; description?: string; iconUrl?: string } = {
       name: this.formName.trim(),
-      description: this.formDescription.trim() || undefined,
-      iconUrl: resolvedIcon,
+    };
+
+    if (this.formDescription.trim()) {
+      payload.description = this.formDescription.trim();
+    }
+
+    // Se non è un URL valido (es. emoji o vuoto), non inviare la proprietà
+    if (hasValidHttpUrl) {
+      payload.iconUrl = trimmedIcon;
+    }
+
+    const handleBackendError = (err: any) => {
+      this.formSubmitting.set(false);
+
+      // Estrae i dettagli di validazione annidati (es. details.iconUrl)
+      const validationDetails = err?.error?.error?.details;
+      if (validationDetails) {
+        const messages = Object.entries(validationDetails)
+          .map(([field, msgs]) => `${field}: ${(msgs as string[]).join(', ')}`)
+          .join(' | ');
+        this.formError.set(messages);
+        return;
+      }
+
+      if (err?.status === 409) {
+        this.formError.set('A sport with this name already exists.');
+        return;
+      }
+
+      const fallbackMsg =
+        err?.error?.error?.message || err?.error?.message || 'Error saving sport.';
+      this.formError.set(fallbackMsg);
     };
 
     if (this.isEditing() && this.currentEditingId()) {
@@ -172,10 +204,7 @@ export class SportsComponent implements OnInit, OnDestroy {
           this.formSubmitting.set(false);
           this.closeModal();
         },
-        error: (err: any) => {
-          this.formSubmitting.set(false);
-          this.formError.set(err?.error?.message || 'Error updating sport.');
-        },
+        error: handleBackendError,
       });
     } else {
       this.sportsService.createSport(payload).subscribe({
@@ -183,14 +212,10 @@ export class SportsComponent implements OnInit, OnDestroy {
           this.formSubmitting.set(false);
           this.closeModal();
         },
-        error: (err: any) => {
-          this.formSubmitting.set(false);
-          this.formError.set(err?.error?.message || 'Error creating sport.');
-        },
+        error: handleBackendError,
       });
     }
   }
-
   promptDelete(sport: Sport): void {
     this.deleteModalSport.set(sport);
   }

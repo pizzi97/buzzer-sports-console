@@ -121,16 +121,15 @@
             <input
               type="text"
               [(ngModel)]="formName"
-              (input)="onNameInput()"
               placeholder="e.g. Swimming, Padel, Football"
             />
           </div>
           <div class="input-field">
-            <label>Description (Optional)</label>
+            <label>Icon URL (Optional)</label>
             <input
               type="text"
-              [(ngModel)]="formDescription"
-              placeholder="Brief sport description"
+              [(ngModel)]="formIconUrl"
+              placeholder="https://example.com/icon.svg"
             />
           </div>
           <div class="input-field">
