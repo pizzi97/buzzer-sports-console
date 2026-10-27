@@ -148,9 +148,9 @@ export class SportsComponent implements OnInit, OnDestroy {
   closeModal(): void {
     this.isModalOpen.set(false);
   }
-
   saveSport(): void {
-    if (!this.formName.trim()) {
+    const trimmedName = this.formName.trim();
+    if (!trimmedName) {
       this.formError.set('Name is required.');
       return;
     }
@@ -158,27 +158,26 @@ export class SportsComponent implements OnInit, OnDestroy {
     this.formSubmitting.set(true);
     this.formError.set(null);
 
-    // Invia iconUrl SOLO se è un vero URL web http/https valido
-    const trimmedIcon = this.formIconUrl.trim();
-    const hasValidHttpUrl = /^https?:\/\/.+/i.test(trimmedIcon);
+    // Invia iconUrl SOLO se è un vero indirizzo web valido (http o https)
+    const trimmedIcon = this.formIconUrl ? this.formIconUrl.trim() : '';
+    const isRealUrl = /^https?:\/\/.+/i.test(trimmedIcon);
 
     const payload: { name: string; description?: string; iconUrl?: string } = {
-      name: this.formName.trim(),
+      name: trimmedName,
     };
 
-    if (this.formDescription.trim()) {
+    if (this.formDescription && this.formDescription.trim()) {
       payload.description = this.formDescription.trim();
     }
 
-    // Se non è un URL valido (es. emoji o vuoto), non inviare la proprietà
-    if (hasValidHttpUrl) {
+    // Se è un URL valido lo invia, altrimenti omette del tutto la proprietà
+    if (isRealUrl) {
       payload.iconUrl = trimmedIcon;
     }
 
     const handleBackendError = (err: any) => {
       this.formSubmitting.set(false);
 
-      // Estrae i dettagli di validazione annidati (es. details.iconUrl)
       const validationDetails = err?.error?.error?.details;
       if (validationDetails) {
         const messages = Object.entries(validationDetails)
