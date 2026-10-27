@@ -158,7 +158,6 @@ export class SportsComponent implements OnInit, OnDestroy {
     this.formSubmitting.set(true);
     this.formError.set(null);
 
-    // Invia iconUrl SOLO se è un vero indirizzo web valido (http o https)
     const trimmedIcon = this.formIconUrl ? this.formIconUrl.trim() : '';
     const isRealUrl = /^https?:\/\/.+/i.test(trimmedIcon);
 
@@ -170,7 +169,6 @@ export class SportsComponent implements OnInit, OnDestroy {
       payload.description = this.formDescription.trim();
     }
 
-    // Se è un URL valido lo invia, altrimenti omette del tutto la proprietà
     if (isRealUrl) {
       payload.iconUrl = trimmedIcon;
     }
@@ -178,20 +176,26 @@ export class SportsComponent implements OnInit, OnDestroy {
     const handleBackendError = (err: any) => {
       this.formSubmitting.set(false);
 
-      const validationDetails = err?.error?.error?.details;
-      if (validationDetails) {
-        const messages = Object.entries(validationDetails)
-          .map(([field, msgs]) => `${field}: ${(msgs as string[]).join(', ')}`)
-          .join(' | ');
-        this.formError.set(messages);
-        return;
-      }
-
+      // 1. Gestione specifica per nome duplicato
       if (err?.status === 409) {
         this.formError.set('A sport with this name already exists.');
         return;
       }
 
+      // 2. Gestione sicura dei dettagli di validazione
+      const validationDetails = err?.error?.error?.details || err?.error?.details;
+      if (validationDetails && typeof validationDetails === 'object') {
+        const messages = Object.entries(validationDetails)
+          .map(([field, val]) => {
+            const detailMsg = Array.isArray(val) ? val.join(', ') : String(val);
+            return `${field}: ${detailMsg}`;
+          })
+          .join(' | ');
+        this.formError.set(messages);
+        return;
+      }
+
+      // 3. Fallback sul messaggio del backend o generico
       const fallbackMsg =
         err?.error?.error?.message || err?.error?.message || 'Error saving sport.';
       this.formError.set(fallbackMsg);
