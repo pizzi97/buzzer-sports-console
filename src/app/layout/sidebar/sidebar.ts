@@ -1,6 +1,7 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
+import { AuthService } from '../../core/services/auth';
 
 @Component({
   selector: 'app-sidebar',
@@ -10,13 +11,33 @@ import { Router, RouterModule } from '@angular/router';
   styleUrl: './sidebar.scss',
 })
 export class SidebarComponent {
-  private router = inject(Router);
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
+
+  // Ricava le info dell'utente corrente (dal servizio o dal payload del JWT)
+  readonly currentUser = computed(() => {
+    // Se authService espone già un signal/metodo currentUser usalo,
+    // altrimenti decodifica direttamente il token salvato
+    const token = this.authService.getToken();
+    if (!token) return null;
+
+    try {
+      const payloadBase64 = token.split('.')[1];
+      const payloadJson = atob(payloadBase64);
+      return JSON.parse(payloadJson);
+    } catch {
+      return null;
+    }
+  });
+
+  readonly userRole = computed(() => this.currentUser()?.role || 'GUEST');
+  readonly userEmail = computed(() => this.currentUser()?.email || 'user@buzzer.dev');
+  readonly avatarInitial = computed(() => (this.userEmail().charAt(0) || 'U').toUpperCase());
 
   logout(): void {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    this.authService.clearSession();
     this.router.navigate(['/login']);
   }
 }
 
-export { SidebarComponent as Sidebar };
+export {SidebarComponent as Sidebar};

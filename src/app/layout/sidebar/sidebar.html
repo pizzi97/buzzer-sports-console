@@ -113,12 +113,13 @@
   </div>
 
   <!-- Profilo Utente in fondo -->
+  <!-- Profilo Utente in fondo -->
   <div class="sidebar-footer">
     <div class="user-profile">
-      <div class="avatar-badge">A</div>
+      <div class="avatar-badge">{{ avatarInitial() }}</div>
       <div class="user-meta">
-        <span class="user-role">ADMIN</span>
-        <span class="user-email">admin&#64;buzzer.dev</span>
+        <span class="user-role">{{ userRole() }}</span>
+        <span class="user-email">{{ userEmail() }}</span>
       </div>
       <button class="logout-btn" type="button" title="Sign Out" (click)="logout()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
