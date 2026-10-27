@@ -115,3 +115,19 @@ app-header {
     background: rgba(255, 255, 255, 0.25);
   }
 }
+
+/* Rimuove o forza sotto il layout eventuali saette/watermark giganti fuori scala */
+.bg-bolt,
+.watermark,
+.logo-watermark,
+.background-bolt,
+.bolt-watermark {
+  display: none !important;
+}
+
+/* Se la saetta è un SVG privo di classe nel wrapper principale */
+main > svg,
+.main-wrapper > svg,
+.content-area > svg {
+  display: none !important;
+}

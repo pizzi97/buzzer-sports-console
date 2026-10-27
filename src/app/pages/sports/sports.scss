@@ -1,8 +1,33 @@
+:host {
+  display: block;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
 .content-body {
-  padding: 24px 32px;
+  padding: 24px 32px 48px;
   background-color: #101212;
-  min-height: calc(100vh - 64px);
+  height: 100vh;
+  max-height: 100vh;
+  overflow-y: auto;       /* Sblocca lo scorrimento verticale */
+  overflow-x: hidden;
   color: #ffffff;
+  position: relative;
+  z-index: 2;             /* Si posiziona sopra eventuali elementi di sfondo */
+  box-sizing: border-box;
+
+  /* Scrollbar scura coordinata con la palette */
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  &::-webkit-scrollbar-track {
+    background: #141616;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #2a2e2e;
+    border-radius: 4px;
+  }
 }
 
 .action-row {
@@ -84,6 +109,7 @@
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+  margin-bottom: 32px;
 
   .data-table {
     width: 100%;
@@ -215,7 +241,6 @@
     }
   }
 
-  /* Footer Paginazione Integrato */
   .table-footer {
     display: flex;
     align-items: center;
@@ -293,7 +318,7 @@
   }
 }
 
-/* Modal Add/Edit & Delete */
+/* Modali */
 .modal-backdrop {
   position: fixed;
   inset: 0;
