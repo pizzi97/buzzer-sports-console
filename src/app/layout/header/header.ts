@@ -1,25 +1,21 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { SearchService } from '../../core/services/search.service';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './header.html',
   styleUrl: './header.scss',
 })
 export class HeaderComponent {
-  protected searchService = inject(SearchService);
+  protected readonly searchService = inject(SearchService);
 
-  onSearch(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    this.searchService.searchTerm.set(input.value);
-  }
-
-  onSearchInput(event: Event): void {
-    this.onSearch(event);
+  onSearchChange(term: string): void {
+    this.searchService.setSearchTerm(term);
   }
 }
 
-export { HeaderComponent as Header };
+export {HeaderComponent as Header};
