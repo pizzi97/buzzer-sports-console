@@ -1,16 +1,22 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, RouterLinkActive } from '@angular/router';
-import { AuthService } from '../../core/services/auth';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive],
+  imports: [CommonModule, RouterModule],
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.scss',
 })
 export class SidebarComponent {
-  // Cambiato da private a protected per consentire l'accesso al template HTML
-  protected authService = inject(AuthService);
+  private router = inject(Router);
+
+  logout(): void {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    this.router.navigate(['/login']);
+  }
 }
+
+export { SidebarComponent as Sidebar };
