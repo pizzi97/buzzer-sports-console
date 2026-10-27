@@ -1,7 +1,8 @@
 ﻿import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, forkJoin } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
 
 export interface Sport {
   id: string;
@@ -37,17 +38,17 @@ export interface SportsStats {
   providedIn: 'root',
 })
 export class SportsService {
-  private http = inject(HttpClient);
-  private baseUrl = 'https://backend-3ofw.onrender.com/api/organizations';
+  private readonly http = inject(HttpClient);
+  private readonly baseUrl = `${environment.apiUrl.replace(/\/+$/, '')}/organizations`;
 
-  sports = signal<Sport[]>([]);
-  loading = signal<boolean>(false);
-  currentPage = signal<number>(1);
-  pageSize = signal<number>(10);
-  totalPages = signal<number>(1);
-  totalItems = signal<number>(0);
+  readonly sports = signal<Sport[]>([]);
+  readonly loading = signal<boolean>(false);
+  readonly currentPage = signal<number>(1);
+  readonly pageSize = signal<number>(10);
+  readonly totalPages = signal<number>(1);
+  readonly totalItems = signal<number>(0);
 
-  stats = signal<SportsStats>({
+  readonly stats = signal<SportsStats>({
     totalSports: 0,
     totalGoverningBodies: 0,
     totalOrganisations: 0,

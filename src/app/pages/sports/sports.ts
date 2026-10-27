@@ -43,26 +43,26 @@ const SPORT_EMOJIS: Record<string, string> = {
   styleUrl: './sports.scss',
 })
 export class SportsComponent implements OnInit, OnDestroy {
-  protected sportsService = inject(SportsService);
-  protected searchService = inject(SearchService);
-  private router = inject(Router);
+  readonly sportsService = inject(SportsService);
+  readonly searchService = inject(SearchService);
+  private readonly router = inject(Router);
 
-  private searchSubject = new Subject<string>();
+  private readonly searchSubject = new Subject<string>();
   private searchSub?: Subscription;
 
-  failedImages = signal<Set<string>>(new Set<string>());
+  readonly failedImages = signal<Set<string>>(new Set<string>());
 
-  isModalOpen = signal<boolean>(false);
-  isEditing = signal<boolean>(false);
-  currentEditingId = signal<string | null>(null);
+  readonly isModalOpen = signal<boolean>(false);
+  readonly isEditing = signal<boolean>(false);
+  readonly currentEditingId = signal<string | null>(null);
 
   formName = '';
   formDescription = '';
   formIconUrl = '';
-  formError = signal<string | null>(null);
-  formSubmitting = signal<boolean>(false);
+  readonly formError = signal<string | null>(null);
+  readonly formSubmitting = signal<boolean>(false);
 
-  deleteModalSport = signal<Sport | null>(null);
+  readonly deleteModalSport = signal<Sport | null>(null);
 
   constructor() {
     effect(() => {
@@ -78,7 +78,6 @@ export class SportsComponent implements OnInit, OnDestroy {
     this.searchSub = this.searchSubject
       .pipe(debounceTime(300), distinctUntilChanged())
       .subscribe((term) => {
-        // Al cambio di filtro di ricerca si riparte da pagina 1
         this.sportsService.getSports(term, 1, this.sportsService.pageSize()).subscribe();
       });
   }
