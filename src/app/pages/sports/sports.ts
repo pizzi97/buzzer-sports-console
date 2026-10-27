@@ -1,6 +1,7 @@
-import { Component, OnInit, inject, signal, OnDestroy, Injector, effect } from '@angular/core';
+import { Component, OnInit, inject, signal, OnDestroy, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { SportsService, Sport } from '../../core/services/sports.service';
@@ -15,9 +16,7 @@ const SPORT_EMOJIS: Record<string, string> = {
   baseball: '⚾',
   tennis: '🎾',
   padel: '🎾',
-  padell: '🎾',
   boxing: '🥊',
-  boxe: '🥊',
   mma: '🥊',
   cricket: '🏏',
   hockey: '🏒',
@@ -27,15 +26,11 @@ const SPORT_EMOJIS: Record<string, string> = {
   rugby: '🏉',
   swimming: '🏊',
   nuoto: '🏊',
-  bow: '🏹',
   archery: '🏹',
   'table tennis': '🏓',
-  pingpong: '🏓',
   badminton: '🏸',
   snowboard: '🏂',
-  snowboarding: '🏂',
   ski: '🎿',
-  gymnastics: '🤸',
   cycling: '🚴',
   running: '🏃',
 };
@@ -50,6 +45,7 @@ const SPORT_EMOJIS: Record<string, string> = {
 export class SportsComponent implements OnInit, OnDestroy {
   protected sportsService = inject(SportsService);
   protected searchService = inject(SearchService);
+  private router = inject(Router);
 
   private searchSubject = new Subject<string>();
   private searchSub?: Subscription;
@@ -69,7 +65,6 @@ export class SportsComponent implements OnInit, OnDestroy {
   deleteModalSport = signal<Sport | null>(null);
 
   constructor() {
-    // Si aggancia al segnale dell'header senza violare l'injection context
     effect(() => {
       const term = this.searchService.searchTerm();
       this.searchSubject.next(term);
@@ -77,19 +72,29 @@ export class SportsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.sportsService.getSports().subscribe({
-      error: (e: any) => console.error('Errore getSports:', e),
-    });
+    this.sportsService.loadSummaryStats();
+    this.sportsService.getSports('', 1, 10).subscribe();
 
     this.searchSub = this.searchSubject
       .pipe(debounceTime(300), distinctUntilChanged())
       .subscribe((term) => {
-        this.sportsService.getSports(term).subscribe();
+        // Al cambio di filtro di ricerca si riparte da pagina 1
+        this.sportsService.getSports(term, 1, this.sportsService.pageSize()).subscribe();
       });
   }
 
   ngOnDestroy(): void {
     this.searchSub?.unsubscribe();
+  }
+
+  goToPage(page: number): void {
+    if (page < 1 || page > this.sportsService.totalPages()) return;
+    const term = this.searchService.searchTerm();
+    this.sportsService.getSports(term, page, this.sportsService.pageSize()).subscribe();
+  }
+
+  goToDetail(sport: Sport): void {
+    this.router.navigate(['/sports', sport.id]);
   }
 
   getSportEmoji(name: string): string {
@@ -103,18 +108,9 @@ export class SportsComponent implements OnInit, OnDestroy {
     return '🏅';
   }
 
-  onNameInput(): void {
-    if (!this.formIconUrl || !this.isImageUrl(this.formIconUrl)) {
-      const match = this.getSportEmoji(this.formName);
-      if (match !== '🏅') {
-        this.formIconUrl = match;
-      }
-    }
-  }
-
   isImageUrl(val?: string): boolean {
     if (!val) return false;
-    return /^https?:\/\//i.test(val.trim());
+    return /^https?:\/\/.+/i.test(val.trim());
   }
 
   onImageError(sportId: string): void {
@@ -135,7 +131,8 @@ export class SportsComponent implements OnInit, OnDestroy {
     this.isModalOpen.set(true);
   }
 
-  openEditModal(sport: Sport): void {
+  openEditModal(sport: Sport, event: Event): void {
+    event.stopPropagation();
     this.isEditing.set(true);
     this.currentEditingId.set(sport.id);
     this.formName = sport.name;
@@ -148,6 +145,7 @@ export class SportsComponent implements OnInit, OnDestroy {
   closeModal(): void {
     this.isModalOpen.set(false);
   }
+
   saveSport(): void {
     const trimmedName = this.formName.trim();
     if (!trimmedName) {
@@ -159,7 +157,7 @@ export class SportsComponent implements OnInit, OnDestroy {
     this.formError.set(null);
 
     const trimmedIcon = this.formIconUrl ? this.formIconUrl.trim() : '';
-    const isRealUrl = /^https?:\/\/.+/i.test(trimmedIcon);
+    const isRealUrl = this.isImageUrl(trimmedIcon);
 
     const payload: { name: string; description?: string; iconUrl?: string } = {
       name: trimmedName,
@@ -176,13 +174,11 @@ export class SportsComponent implements OnInit, OnDestroy {
     const handleBackendError = (err: any) => {
       this.formSubmitting.set(false);
 
-      // 1. Gestione specifica per nome duplicato
       if (err?.status === 409) {
         this.formError.set('A sport with this name already exists.');
         return;
       }
 
-      // 2. Gestione sicura dei dettagli di validazione
       const validationDetails = err?.error?.error?.details || err?.error?.details;
       if (validationDetails && typeof validationDetails === 'object') {
         const messages = Object.entries(validationDetails)
@@ -195,7 +191,6 @@ export class SportsComponent implements OnInit, OnDestroy {
         return;
       }
 
-      // 3. Fallback sul messaggio del backend o generico
       const fallbackMsg =
         err?.error?.error?.message || err?.error?.message || 'Error saving sport.';
       this.formError.set(fallbackMsg);
@@ -219,7 +214,9 @@ export class SportsComponent implements OnInit, OnDestroy {
       });
     }
   }
-  promptDelete(sport: Sport): void {
+
+  promptDelete(sport: Sport, event: Event): void {
+    event.stopPropagation();
     this.deleteModalSport.set(sport);
   }
 
