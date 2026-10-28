@@ -1,6 +1,6 @@
 ﻿import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, forkJoin } from 'rxjs';
+import { Observable, forkJoin, map } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 
@@ -120,6 +120,12 @@ export class SportsService {
         this.getSports('', this.currentPage(), this.pageSize()).subscribe();
       }),
     );
+  }
+
+  getById(id: string): Observable<Sport> {
+    return this.http
+      .get<{ data: Sport } | Sport>(`${this.baseUrl}/sports/${id}`)
+      .pipe(map((res: any) => res.data || res));
   }
 
   deleteSport(id: string): Observable<any> {

@@ -1,0 +1,132 @@
+<div class="drilldown-container">
+  <!-- Breadcrumbs Bidirezionali -->
+  <app-breadcrumbs [items]="breadcrumbItems()"></app-breadcrumbs>
+
+  <!-- Header con Metadati Sport -->
+  @if (sport(); as s) {
+    <header class="detail-header">
+      <div class="header-main">
+        <div class="sport-badge">
+          @if (s.iconUrl) {
+            <img [src]="s.iconUrl" [alt]="s.name" class="sport-icon" />
+          } @else {
+            <span class="sport-initial">{{ s.name.charAt(0) }}</span>
+          }
+        </div>
+        <div class="header-titles">
+          <h1 class="sport-title">{{ s.name }}</h1>
+          <p class="sport-desc">{{ s.description || 'No description provided' }}</p>
+        </div>
+      </div>
+      <button class="btn btn-primary" type="button" (click)="openCreateModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        Add Governing Body
+      </button>
+    </header>
+
+    <!-- Stat Card -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span class="stat-label">Governing Bodies</span>
+        <span class="stat-value">{{ governingBodies().length }}</span>
+      </div>
+    </div>
+  }
+
+  <!-- Tabella Governing Bodies -->
+  <section class="table-section">
+    <div class="section-header">
+      <h2>Governing Bodies</h2>
+    </div>
+
+    @if (isLoading()) {
+      <div class="loading-state">Loading governing bodies...</div>
+    } @else if (governingBodies().length === 0) {
+      <div class="empty-state">
+        <p>No governing bodies associated with this sport yet.</p>
+        <button class="btn btn-secondary" type="button" (click)="openCreateModal()">Add the first one</button>
+      </div>
+    } @else {
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+          <tr>
+            <th>Governing Body</th>
+            <th>Description</th>
+            <th class="text-right">Actions</th>
+          </tr>
+          </thead>
+          <tbody>
+            @for (gb of governingBodies(); track gb.id) {
+              <tr>
+                <td>
+                  <div class="entity-cell">
+                    @if (gb.logoUrl) {
+                      <img [src]="gb.logoUrl" [alt]="gb.name" class="entity-logo" />
+                    } @else {
+                      <div class="entity-avatar">{{ gb.name.charAt(0) }}</div>
+                    }
+                    <a [routerLink]="['/sports', sportId(), 'governing-bodies', gb.id]" class="entity-name-link">
+                      {{ gb.name }}
+                    </a>
+                  </div>
+                </td>
+                <td class="desc-cell">{{ gb.description || '—' }}</td>
+                <td class="text-right">
+                  <a [routerLink]="['/sports', sportId(), 'governing-bodies', gb.id]" class="btn-action" title="View organisations">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                  </a>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+</div>
+
+<!-- Modal Creazione Governing Body -->
+@if (isCreateModalOpen()) {
+  <div class="modal-backdrop" (click)="closeCreateModal()">
+    <div class="modal-dialog" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Add Governing Body</h3>
+        <button class="close-btn" type="button" (click)="closeCreateModal()">&times;</button>
+      </div>
+
+      @if (modalError()) {
+        <div class="modal-error-banner">{{ modalError() }}</div>
+      }
+
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Governing Body Name *</label>
+          <input type="text" [(ngModel)]="gbName" placeholder="e.g. FIFA, FIBA" class="form-input" />
+        </div>
+
+        <div class="form-group">
+          <label>Description (Optional)</label>
+          <textarea [(ngModel)]="gbDescription" placeholder="Brief description" class="form-input" rows="3"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Logo URL (Optional)</label>
+          <input type="url" [(ngModel)]="gbLogoUrl" placeholder="https://example.com/logo.png" class="form-input" />
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" type="button" (click)="closeCreateModal()" [disabled]="isSubmitting()">Cancel</button>
+        <button class="btn btn-primary" type="button" (click)="createGoverningBody()" [disabled]="isSubmitting()">
+          {{ isSubmitting() ? 'Creating...' : 'Create Governing Body' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

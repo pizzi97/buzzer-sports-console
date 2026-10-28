@@ -1,0 +1,44 @@
+<div class="drill-page">
+  <app-breadcrumbs [items]="breadcrumbItems()"></app-breadcrumbs>
+
+  @if (errorMessage()) {
+    <div class="error-banner">{{ errorMessage() }}</div>
+  }
+
+  @if (isLoading()) {
+    <div class="loading-state">Loading participant profile...</div>
+  } @else if (participant(); as p) {
+    <div class="participant-card">
+      <div class="participant-header">
+        @if (p.photoUrl) {
+          <img [src]="p.photoUrl" class="profile-photo" alt="" />
+        } @else {
+          <div class="profile-photo placeholder">👤</div>
+        }
+        <div class="profile-info">
+          <h1>{{ p.firstName }} {{ p.lastName }}</h1>
+          <p class="role-badge">{{ p.role || 'Player / Member' }}</p>
+        </div>
+      </div>
+
+      <div class="participant-details-grid">
+        <div class="detail-box">
+          <span class="label">Jersey Number</span>
+          <span class="val">{{ p.jerseyNumber ? '#' + p.jerseyNumber : 'N/A' }}</span>
+        </div>
+        <div class="detail-box">
+          <span class="label">Member ID</span>
+          <span class="val code">{{ p.id }}</span>
+        </div>
+        <div class="detail-box">
+          <span class="label">Affiliated Organisation</span>
+          <span class="val">{{ organization()?.name || orgId() }}</span>
+        </div>
+        <div class="detail-box">
+          <span class="label">Enrolled Date</span>
+          <span class="val">{{ p.createdAt ? (p.createdAt | date:'mediumDate') : '—' }}</span>
+        </div>
+      </div>
+    </div>
+  }
+</div>

@@ -1,0 +1,112 @@
+<div class="drill-page">
+  <app-breadcrumbs [items]="breadcrumbItems()"></app-breadcrumbs>
+
+  @if (errorMessage()) {
+    <div class="error-banner">{{ errorMessage() }}</div>
+  }
+
+  @if (organization(); as org) {
+    <header class="detail-header">
+      <div class="header-left">
+        @if (org.logoUrl) {
+          <img [src]="org.logoUrl" [alt]="org.name" class="header-logo" />
+        } @else {
+          <div class="header-logo placeholder">🛡️</div>
+        }
+        <div>
+          <h1 class="header-title">{{ org.name }}</h1>
+          <p class="header-desc">{{ org.description || 'No description provided.' }}</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-primary" (click)="openCreateModal()">+ Add Participant</button>
+      </div>
+    </header>
+
+    <section class="content-section">
+      <div class="section-top">
+        <h2>Participants ({{ org.participantsCount ?? participants().length }})</h2>
+      </div>
+
+      @if (isLoading()) {
+        <div class="loading-state">Loading participants...</div>
+      } @else if (participants().length === 0) {
+        <div class="empty-state">No participants linked to this organisation yet.</div>
+      } @else {
+        <table class="data-table">
+          <thead>
+          <tr>
+            <th>Participant</th>
+            <th>Role</th>
+            <th>Number</th>
+            <th>Action</th>
+          </tr>
+          </thead>
+          <tbody>
+            @for (p of participants(); track p.id) {
+              <tr>
+                <td class="name-col">
+                  @if (p.photoUrl) {
+                    <img [src]="p.photoUrl" class="table-avatar" alt="" />
+                  }
+                  <span>{{ p.firstName }} {{ p.lastName }}</span>
+                </td>
+                <td>{{ p.role || '—' }}</td>
+                <td>{{ p.jerseyNumber ? '#' + p.jerseyNumber : '—' }}</td>
+                <td>
+                  <a
+                    [routerLink]="['/sports', sportId(), 'governing-bodies', gbId(), 'organizations', orgId(), 'participants', p.id]"
+                    class="btn-link"
+                  >
+                    View Details →
+                  </a>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    </section>
+  }
+
+  @if (isCreateModalOpen()) {
+    <div class="modal-backdrop" (click)="closeCreateModal()">
+      <div class="modal-card" (click)="$event.stopPropagation()">
+        <h3>Add Participant</h3>
+        @if (modalError()) {
+          <div class="modal-error">{{ modalError() }}</div>
+        }
+        <div class="form-row">
+          <div class="form-group">
+            <label>First Name *</label>
+            <input type="text" [(ngModel)]="firstName" placeholder="First name" class="input" />
+          </div>
+          <div class="form-group">
+            <label>Last Name *</label>
+            <input type="text" [(ngModel)]="lastName" placeholder="Last name" class="input" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Role</label>
+            <input type="text" [(ngModel)]="role" placeholder="e.g. Forward, Midfielder" class="input" />
+          </div>
+          <div class="form-group">
+            <label>Jersey Number</label>
+            <input type="number" [(ngModel)]="jerseyNumber" placeholder="10" class="input" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Photo URL</label>
+          <input type="text" [(ngModel)]="photoUrl" placeholder="https://..." class="input" />
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn-secondary" (click)="closeCreateModal()" [disabled]="isSubmitting()">Cancel</button>
+          <button class="btn btn-primary" (click)="createParticipant()" [disabled]="isSubmitting()">
+            {{ isSubmitting() ? 'Saving...' : 'Create' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

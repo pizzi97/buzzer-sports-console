@@ -1,0 +1,22 @@
+<nav class="breadcrumb-container" aria-label="Breadcrumb">
+  <ol class="breadcrumb-list">
+    <li class="breadcrumb-item">
+      <a routerLink="/sports" class="breadcrumb-link">Sports</a>
+    </li>
+
+    @for (item of items(); track item.label; let last = $last) {
+      <li class="breadcrumb-separator" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </li>
+      <li class="breadcrumb-item" [class.active]="last">
+        @if (!last && item.url) {
+          <a [routerLink]="item.url" class="breadcrumb-link">{{ item.label }}</a>
+        } @else {
+          <span class="breadcrumb-current">{{ item.label }}</span>
+        }
+      </li>
+    }
+  </ol>
+</nav>
